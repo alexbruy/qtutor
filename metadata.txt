@@ -1,0 +1,21 @@
+[general]
+name=QTutor
+description=Learn QGIS with the help of step-by-step semi-interactive lessons.
+about=Run lessons and tutorials to learn QGIS and/or its plugins. Lessons need to be installed separately. Inspired and based on the Lessons plugin by Victor Olaya.
+category=Plugins
+version=0.1
+qgisMinimumVersion=2.99
+
+author=Alexander Bruy
+email=alexander.bruy@gmail.com
+
+icon=icons/qtutor.png
+
+tags=tutorial,lesson,qgis
+
+homepage=https://github.com/alexbruy/qtutor
+tracker=https://github.com/alexbruy/qtutor/issues
+repository=https://github.com/alexbruy/qtutor
+
+experimental=True
+deprecated=False
