@@ -2,7 +2,7 @@
 
 """
 ***************************************************************************
-    qtutordialog.py
+    qtutorlibrarydialog.py
     ---------------------
     Date                 : December 2017
     Copyright            : (C) 2017 by Alexander Bruy
@@ -35,12 +35,12 @@ from qgis.gui import QgsGui
 
 pluginPath = os.path.split(os.path.dirname(__file__))[0]
 WIDGET, BASE = uic.loadUiType(
-    os.path.join(pluginPath, 'ui', 'qtutordialogbase.ui'))
+    os.path.join(pluginPath, 'ui', 'qtutorlibrarydialogbase.ui'))
 
 
-class QTutorDialog(BASE, WIDGET):
+class QTutorLibraryDialog(BASE, WIDGET):
     def __init__(self, parent=None):
-        super(QTutorDialog, self).__init__(parent)
+        super(QTutorLibraryDialog, self).__init__(parent)
         self.setupUi(self)
 
         QgsGui.instance().enableAutoGeometryRestore(self)

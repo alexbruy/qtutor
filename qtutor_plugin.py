@@ -34,7 +34,7 @@ from qgis.PyQt.QtWidgets import QAction
 from qgis.gui import QgsOptionsWidgetFactory
 from qgis.core import QgsSettings, QgsApplication
 
-from qtutor.gui.qtutordialog import QTutorDialog
+from qtutor.gui.qtutorlibrarydialog import QTutorLibraryDialog
 from qtutor.gui.qtutoroptionswidget import QTutorOptionsPage
 from qtutor.gui.aboutdialog import AboutDialog
 
@@ -103,7 +103,7 @@ class QTutorPlugin:
         self.iface.unregisterOptionsWidgetFactory(self.optionsFactory)
 
     def run(self):
-        dlg = QTutorDialog()
+        dlg = QTutorLibraryDialog()
         dlg.show()
         dlg.exec_()
 
