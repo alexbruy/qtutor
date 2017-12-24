@@ -2,7 +2,7 @@
 
 """
 ***************************************************************************
-    qtutorlibrarydialog.py
+    qtutordock.py
     ---------------------
     Date                 : December 2017
     Copyright            : (C) 2017 by Alexander Bruy
@@ -28,50 +28,43 @@ __revision__ = '$Format:%H$'
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import QDialog, QDockWidget
-
-from qgis.gui import QgsGui
-from qgis.core import QgsSettings
+from qgis.PyQt.QtCore import pyqtSignal
+from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.utils import iface
-
-from qtutor.gui.qtutordock import QTutorDock
 
 pluginPath = os.path.split(os.path.dirname(__file__))[0]
 WIDGET, BASE = uic.loadUiType(
-    os.path.join(pluginPath, 'ui', 'qtutorlibrarydialogbase.ui'))
+    os.path.join(pluginPath, 'ui', 'qtutordockbase.ui'))
 
 
-class QTutorLibraryDialog(BASE, WIDGET):
+class QTutorDock(BASE, WIDGET):
+
+    lessonFinished = pyqtSignal()
+
     def __init__(self, parent=None):
-        super(QTutorLibraryDialog, self).__init__(parent)
+        super(QTutorDock, self).__init__(parent)
         self.setupUi(self)
 
-        QgsGui.instance().enableAutoGeometryRestore(self)
+        self.btnNextStep.clicked.connect(self.nextStep)
+        self.btnExecuteStep.clicked.connect(self.executeStep)
+        self.btnRestartLesson.clicked.connect(self.restartLesson)
+        self.btnQuitLesson.clicked.connect(self.quitLesson)
 
-        self.btnAddLessons.clicked.connect(self.addLessons)
-        self.btnRemoveLessons.clicked.connect(self.removeLessons)
-        self.btnStartLesson.clicked.connect(self.startLesson)
+        self.running = True
 
-        self.dock = QTutorDock()
-        self.dock.lessonFinished.connect(self.showLibrary)
-
-    def addLessons(self):
+    def nextStep(self):
         pass
 
-    def removeLessons(self):
+    def executeStep(self):
         pass
 
-    def startLesson(self):
-        area = QgsSettings().value('qtutor/dockArea', Qt.RightDockWidgetArea)
-        iface.addDockWidget(area, self.dock)
-        self.showMinimized()
+    def restartLesson(self):
+        pass
 
-    def showLibrary(self):
-        iface.removeDockWidget(self.dock)
-        self.showNormal()
-        self.raise_()
-        self.activateWindow()
-
-    def reject(self):
-        QDialog.reject(self)
+    def quitLesson(self):
+        if self.running:
+            result = QMessageBox.question(None,
+                                          self.tr('Lesson is not completed!'),
+                                          self.tr('Current lesson is not completed. Continue?'))
+            if result == QMessageBox.Yes:
+                self.lessonFinished.emit()

@@ -74,7 +74,6 @@ class QTutorPlugin:
         self.optionsFactory.setTitle(self.tr('QTutor'))
         iface.registerOptionsWidgetFactory(self.optionsFactory)
 
-
     def initGui(self):
         self.actionRun = QAction(
             self.tr('QTutor'), self.iface.mainWindow())
