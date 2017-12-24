@@ -31,12 +31,26 @@ from qgis.PyQt.QtCore import (QCoreApplication, QLocale, QTranslator)
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
+from qgis.gui import QgsOptionsWidgetFactory
 from qgis.core import QgsSettings, QgsApplication
 
 from qtutor.gui.qtutordialog import QTutorDialog
+from qtutor.gui.qtutoroptionswidget import QTutorOptionsPage
 from qtutor.gui.aboutdialog import AboutDialog
 
 pluginPath = os.path.dirname(__file__)
+
+
+class QTutorOptionsFactory(QgsOptionsWidgetFactory):
+
+    def __init__(self):
+        super(QgsOptionsWidgetFactory, self).__init__()
+
+    def icon(self):
+        return QIcon(os.path.join(pluginPath, 'icons', 'qtutor.png'))
+
+    def createWidget(self, parent):
+        return QTutorOptionsPage(parent)
 
 
 class QTutorPlugin:
@@ -55,6 +69,11 @@ class QTutorPlugin:
             self.translator = QTranslator()
             self.translator.load(qmPath)
             QCoreApplication.installTranslator(self.translator)
+
+        self.optionsFactory = QTutorOptionsFactory()
+        self.optionsFactory.setTitle(self.tr('QTutor'))
+        iface.registerOptionsWidgetFactory(self.optionsFactory)
+
 
     def initGui(self):
         self.actionRun = QAction(
@@ -80,6 +99,8 @@ class QTutorPlugin:
         self.iface.removePluginMenu(self.tr('QTutor'), self.actionRun)
         self.iface.removePluginMenu(self.tr('QTutor'), self.actionAbout)
         self.iface.removeToolBarIcon(self.actionRun)
+
+        self.iface.unregisterOptionsWidgetFactory(self.optionsFactory)
 
     def run(self):
         dlg = QTutorDialog()
