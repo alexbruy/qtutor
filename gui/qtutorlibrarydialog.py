@@ -38,8 +38,7 @@ from qgis.utils import iface
 from qtutor.gui.qtutordock import QTutorDock
 
 pluginPath = os.path.split(os.path.dirname(__file__))[0]
-WIDGET, BASE = uic.loadUiType(
-    os.path.join(pluginPath, 'ui', 'qtutorlibrarydialogbase.ui'))
+WIDGET, BASE = uic.loadUiType(os.path.join(pluginPath, 'ui', 'qtutorlibrarydialogbase.ui'))
 
 
 class QTutorLibraryDialog(BASE, WIDGET):

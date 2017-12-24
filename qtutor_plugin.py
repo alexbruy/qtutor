@@ -27,12 +27,12 @@ __revision__ = '$Format:%H$'
 
 import os
 
-from qgis.PyQt.QtCore import (QCoreApplication, QLocale, QTranslator)
+from qgis.PyQt.QtCore import QCoreApplication, QTranslator
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
 from qgis.gui import QgsOptionsWidgetFactory
-from qgis.core import QgsSettings, QgsApplication
+from qgis.core import QgsApplication
 
 from qtutor.gui.qtutorlibrarydialog import QTutorLibraryDialog
 from qtutor.gui.qtutoroptionswidget import QTutorOptionsPage
@@ -47,7 +47,7 @@ class QTutorOptionsFactory(QgsOptionsWidgetFactory):
         super(QgsOptionsWidgetFactory, self).__init__()
 
     def icon(self):
-        return QIcon(os.path.join(pluginPath, 'icons', 'qtutor.png'))
+        return QIcon(os.path.join(pluginPath, 'icons', 'qtutor.svg'))
 
     def createWidget(self, parent):
         return QTutorOptionsPage(parent)
@@ -57,13 +57,7 @@ class QTutorPlugin:
     def __init__(self, iface):
         self.iface = iface
 
-        overrideLocale = QgsSettings().value('locale/overrideFlag', False, bool)
-        if not overrideLocale:
-            locale = QLocale.system().name()[:2]
-        else:
-            locale = QgsSettings().value('locale/userLocale', '')
-
-        qmPath = '{}/i18n/qtutor_{}.qm'.format(pluginPath, locale)
+        qmPath = '{}/i18n/qtutor_{}.qm'.format(pluginPath, QgsApplication.locale())
 
         if os.path.exists(qmPath):
             self.translator = QTranslator()
@@ -75,16 +69,12 @@ class QTutorPlugin:
         iface.registerOptionsWidgetFactory(self.optionsFactory)
 
     def initGui(self):
-        self.actionRun = QAction(
-            self.tr('QTutor'), self.iface.mainWindow())
-        self.actionRun.setIcon(
-            QIcon(os.path.join(pluginPath, 'icons', 'qtutor.png')))
+        self.actionRun = QAction(self.tr('QTutor'), self.iface.mainWindow())
+        self.actionRun.setIcon(QIcon(os.path.join(pluginPath, 'icons', 'qtutor.svg')))
         self.actionRun.setObjectName('runQTutor')
 
-        self.actionAbout = QAction(
-            self.tr('About QTutor…'), self.iface.mainWindow())
-        self.actionAbout.setIcon(
-            QgsApplication.getThemeIcon('/mActionHelpContents.svg'))
+        self.actionAbout = QAction(self.tr('About QTutor…'), self.iface.mainWindow())
+        self.actionAbout.setIcon(QgsApplication.getThemeIcon('/mActionHelpContents.svg'))
         self.actionRun.setObjectName('aboutQTutor')
 
         self.iface.addPluginToMenu(self.tr('QTutor'), self.actionRun)

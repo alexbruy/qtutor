@@ -34,11 +34,10 @@ from qgis.PyQt.QtGui import QTextDocument, QPixmap, QDesktopServices
 from qgis.PyQt.QtCore import QUrl, QLocale
 from qgis.PyQt.QtWidgets import QDialogButtonBox
 
-from qgis.core import QgsSettings
+from qgis.core import QgsApplication
 
 pluginPath = os.path.split(os.path.dirname(__file__))[0]
-WIDGET, BASE = uic.loadUiType(
-    os.path.join(pluginPath, 'ui', 'aboutdialogbase.ui'))
+WIDGET, BASE = uic.loadUiType(os.path.join(pluginPath, 'ui', 'aboutdialogbase.ui'))
 
 
 class AboutDialog(BASE, WIDGET):
@@ -53,7 +52,7 @@ class AboutDialog(BASE, WIDGET):
         version = cfg['general']['version']
 
         self.lblLogo.setPixmap(
-            QPixmap(os.path.join(pluginPath, 'icons', 'qtutor.png')))
+            QPixmap(os.path.join(pluginPath, 'icons', 'qtutor.svg')))
         self.lblVersion.setText(self.tr('Version: {}'.format(version)))
 
         doc = QTextDocument()
@@ -64,18 +63,12 @@ class AboutDialog(BASE, WIDGET):
         self.buttonBox.helpRequested.connect(self.openHelp)
 
     def openHelp(self):
-        overrideLocale = QgsSettings().value('locale/overrideFlag', False, bool)
-        if not overrideLocale:
-            locale = QLocale.system().name()[:2]
-        else:
-            locale = QgsSettings().value('locale/userLocale', '')
+        locale = QgsApplication.locale()
 
-        if locale in ['uk']:
-            QDesktopServices.openUrl(
-                QUrl('https://github.com/alexbruy/qtutor'))
+        if locale == 'uk':
+            QDesktopServices.openUrl(QUrl('https://github.com/alexbruy/qtutor'))
         else:
-            QDesktopServices.openUrl(
-                QUrl('https://github.com/alexbruy/qtutor'))
+            QDesktopServices.openUrl(QUrl('https://github.com/alexbruy/qtutor'))
 
     def getAboutText(self):
         return self.tr(

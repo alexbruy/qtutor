@@ -33,8 +33,7 @@ from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.utils import iface
 
 pluginPath = os.path.split(os.path.dirname(__file__))[0]
-WIDGET, BASE = uic.loadUiType(
-    os.path.join(pluginPath, 'ui', 'qtutordockbase.ui'))
+WIDGET, BASE = uic.loadUiType(os.path.join(pluginPath, 'ui', 'qtutordockbase.ui'))
 
 
 class QTutorDock(BASE, WIDGET):
