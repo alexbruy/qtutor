@@ -31,9 +31,10 @@ import configparser
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QTextDocument, QPixmap, QDesktopServices
-from qgis.PyQt.QtCore import QUrl, QSettings, QLocale
-from qgis.PyQt.QtWidgets import QDialogButtonBox, QDialog
+from qgis.PyQt.QtCore import QUrl, QLocale
+from qgis.PyQt.QtWidgets import QDialogButtonBox
 
+from qgis.core import QgsSettings
 
 pluginPath = os.path.split(os.path.dirname(__file__))[0]
 WIDGET, BASE = uic.loadUiType(
@@ -63,11 +64,11 @@ class AboutDialog(BASE, WIDGET):
         self.buttonBox.helpRequested.connect(self.openHelp)
 
     def openHelp(self):
-        overrideLocale = QSettings().value('locale/overrideFlag', False, bool)
+        overrideLocale = QgsSettings().value('locale/overrideFlag', False, bool)
         if not overrideLocale:
             locale = QLocale.system().name()[:2]
         else:
-            locale = QSettings().value('locale/userLocale', '')
+            locale = QgsSettings().value('locale/userLocale', '')
 
         if locale in ['uk']:
             QDesktopServices.openUrl(

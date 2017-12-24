@@ -25,15 +25,11 @@ __copyright__ = '(C) 2017, Alexander Bruy'
 
 __revision__ = '$Format:%H$'
 
-
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtGui import QDesktopServices
-from qgis.PyQt.QtCore import QUrl, QSettings, QLocale
-from qgis.PyQt.QtWidgets import (QDialog,
-                                 QDialogButtonBox,
-                                )
+from qgis.PyQt.QtWidgets import QDialog
+
 from qgis.gui import QgsGui
 
 

@@ -27,11 +27,11 @@ __revision__ = '$Format:%H$'
 
 import os
 
-from qgis.PyQt.QtCore import (QCoreApplication, QSettings, QLocale, QTranslator)
+from qgis.PyQt.QtCore import (QCoreApplication, QLocale, QTranslator)
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
-from qgis.core import QgsApplication
+from qgis.core import QgsSettings, QgsApplication
 
 from qtutor.gui.qtutordialog import QTutorDialog
 from qtutor.gui.aboutdialog import AboutDialog
@@ -43,11 +43,11 @@ class QTutorPlugin:
     def __init__(self, iface):
         self.iface = iface
 
-        overrideLocale = QSettings().value('locale/overrideFlag', False, bool)
+        overrideLocale = QgsSettings().value('locale/overrideFlag', False, bool)
         if not overrideLocale:
             locale = QLocale.system().name()[:2]
         else:
-            locale = QSettings().value('locale/userLocale', '')
+            locale = QgsSettings().value('locale/userLocale', '')
 
         qmPath = '{}/i18n/qtutor_{}.qm'.format(pluginPath, locale)
 
@@ -61,15 +61,12 @@ class QTutorPlugin:
             self.tr('QTutor'), self.iface.mainWindow())
         self.actionRun.setIcon(
             QIcon(os.path.join(pluginPath, 'icons', 'qtutor.png')))
-        self.actionRun.setWhatsThis(
-            self.tr('Start QTutor and select lesson'))
         self.actionRun.setObjectName('runQTutor')
 
         self.actionAbout = QAction(
             self.tr('About QTutor…'), self.iface.mainWindow())
         self.actionAbout.setIcon(
             QgsApplication.getThemeIcon('/mActionHelpContents.svg'))
-        self.actionAbout.setWhatsThis(self.tr('About QTutor'))
         self.actionRun.setObjectName('aboutQTutor')
 
         self.iface.addPluginToMenu(self.tr('QTutor'), self.actionRun)
@@ -81,7 +78,7 @@ class QTutorPlugin:
 
     def unload(self):
         self.iface.removePluginMenu(self.tr('QTutor'), self.actionRun)
-        self.iface.removePluginVectorMenu(self.tr('QTutor'), self.actionAbout)
+        self.iface.removePluginMenu(self.tr('QTutor'), self.actionAbout)
         self.iface.removeToolBarIcon(self.actionRun)
 
     def run(self):
