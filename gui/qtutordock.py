@@ -50,7 +50,7 @@ class QTutorDock(BASE, WIDGET):
         self.btnRestartLesson.clicked.connect(self.restartLesson)
         self.btnQuitLesson.clicked.connect(self.quitLesson)
 
-        self.running = True
+        self.running = False
 
     def nextStep(self):
         pass
@@ -63,8 +63,11 @@ class QTutorDock(BASE, WIDGET):
 
     def quitLesson(self):
         if self.running:
-            result = QMessageBox.question(None,
-                                          self.tr('Lesson is not completed!'),
-                                          self.tr('Current lesson is not completed. Continue?'))
-            if result == QMessageBox.Yes:
+            reply = QMessageBox.question(None,
+                                         self.tr('Lesson is not completed!'),
+                                         self.tr('Current lesson is not completed. '
+                                                 'Do you want to finish it and return '
+                                                 'to the QTutor library?'))
+            if reply == QMessageBox.Yes:
+                self.running = False
                 self.lessonFinished.emit()

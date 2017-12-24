@@ -29,7 +29,7 @@ import os
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import QDialog, QDockWidget
+from qgis.PyQt.QtWidgets import QDialog, QDockWidget, QMessageBox
 
 from qgis.gui import QgsGui
 from qgis.core import QgsSettings
@@ -63,6 +63,14 @@ class QTutorLibraryDialog(BASE, WIDGET):
         pass
 
     def startLesson(self):
+        if self.dock.running:
+            reply = QMessageBox.warning(self,
+                                        self.tr('Lesson already running!'),
+                                        self.tr('Can not start lesson as there is '
+                                        'already running one. Please finish active '
+                                        'lesson and try again.'))
+            return
+
         area = QgsSettings().value('qtutor/dockArea', Qt.RightDockWidgetArea)
         iface.addDockWidget(area, self.dock)
         self.showMinimized()
