@@ -37,6 +37,7 @@ from qgis.core import QgsApplication
 from qtutor.gui.qtutorlibrarydialog import QTutorLibraryDialog
 from qtutor.gui.qtutoroptionswidget import QTutorOptionsPage
 from qtutor.gui.aboutdialog import AboutDialog
+from qtutor.utils import clearTempData
 
 pluginPath = os.path.dirname(__file__)
 
@@ -90,6 +91,9 @@ class QTutorPlugin:
         self.iface.removeToolBarIcon(self.actionRun)
 
         self.iface.unregisterOptionsWidgetFactory(self.optionsFactory)
+
+        # cleanup temporary files
+        clearTempData()
 
     def run(self):
         dlg = QTutorLibraryDialog()
