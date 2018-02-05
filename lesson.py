@@ -27,7 +27,7 @@ __revision__ = '$Format:%H$'
 
 
 import os
-from importlib import import_module
+import importlib
 
 import yaml
 
@@ -186,9 +186,11 @@ class Lesson:
 
             if definition['name'].startswith('utils.'):
                 functionName = definition['name'].split('.')[1]
-                function = getattr(import_module('lessons.utils'), functionName)
+                function = getattr(importlib.import_module('lessons.utils'), functionName)
             else:
-                mod = imp.load_source('helpers', os.path.join(self.folder, 'helpers.py'))
+                spec = importlib.util.spec_from_file_location('helpers', os.path.join(self.folder, 'helpers.py'))
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
                 function = getattr(mod, definition['name'])
 
             return function, params
