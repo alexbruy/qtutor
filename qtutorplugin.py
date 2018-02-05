@@ -2,7 +2,7 @@
 
 """
 ***************************************************************************
-    qtutor_plugin.py
+    qtutorplugin.py
     ---------------------
     Date                 : December 2017
     Copyright            : (C) 2017 by Alexander Bruy

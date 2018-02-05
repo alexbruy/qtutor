@@ -27,5 +27,5 @@ __revision__ = '$Format:%H$'
 
 
 def classFactory(iface):
-    from qtutor.qtutor_plugin import QTutorPlugin
+    from qtutor.qtutorplugin import QTutorPlugin
     return QTutorPlugin(iface)
