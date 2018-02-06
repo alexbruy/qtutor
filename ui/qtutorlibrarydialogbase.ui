@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>QTutor library</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
@@ -37,8 +37,8 @@
       </attribute>
      </widget>
      <widget class="QWidget" name="">
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0" colspan="4">
         <widget class="QTextBrowser" name="txtInfo">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -48,45 +48,41 @@
          </property>
         </widget>
        </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QPushButton" name="btnAddLessons">
-           <property name="text">
-            <string>Add lessons…</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btnRemoveLessons">
-           <property name="text">
-            <string>Remove lessons</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btnStartLesson">
-           <property name="text">
-            <string>Start lesson</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="btnAddLessons">
+         <property name="text">
+          <string>Add lessons…</string>
+         </property>
+        </widget>
        </item>
-       <item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="btnRemoveLessons">
+         <property name="text">
+          <string>Remove lessons</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>13</width>
+           <height>19</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="3">
+        <widget class="QPushButton" name="btnStartLesson">
+         <property name="text">
+          <string>Start lesson</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="4">
         <widget class="QDialogButtonBox" name="buttonBox">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
