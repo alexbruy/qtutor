@@ -4,8 +4,8 @@
 ***************************************************************************
     aboutdialog.py
     ---------------------
-    Date                 : December 2017
-    Copyright            : (C) 2017 by Alexander Bruy
+    Date                 : January 2018
+    Copyright            : (C) 2018 by Alexander Bruy
     Email                : alexander dot bruy at gmail dot com
 ***************************************************************************
 *                                                                         *
@@ -18,21 +18,20 @@
 """
 
 __author__ = 'Alexander Bruy'
-__date__ = 'December 2017'
-__copyright__ = '(C) 2017, Alexander Bruy'
+__date__ = 'January 2018'
+__copyright__ = '(C) 2018, Alexander Bruy'
 
 # This will get replaced with a git SHA1 when you do a git archive
 
 __revision__ = '$Format:%H$'
-
 
 import os
 import configparser
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QTextDocument, QPixmap, QDesktopServices
-from qgis.PyQt.QtCore import QUrl, QLocale
-from qgis.PyQt.QtWidgets import QDialogButtonBox
+from qgis.PyQt.QtCore import QUrl
+from qgis.PyQt.QtWidgets import QDialogButtonBox, QDialog
 
 from qgis.core import QgsApplication
 
@@ -45,18 +44,24 @@ class AboutDialog(BASE, WIDGET):
         super(AboutDialog, self).__init__(parent)
         self.setupUi(self)
 
-        self.btnHelp = self.buttonBox.button(QDialogButtonBox.Help)
-
         cfg = configparser.ConfigParser()
         cfg.read(os.path.join(pluginPath, 'metadata.txt'))
+        name = cfg['general']['name']
+        about = cfg['general']['about']
         version = cfg['general']['version']
+        icon = cfg['general']['icon']
+        author = cfg['general']['author']
+        self.home = cfg['general']['homepage']
+        bugs = cfg['general']['tracker']
 
-        self.lblLogo.setPixmap(
-            QPixmap(os.path.join(pluginPath, 'icons', 'qtutor.svg')))
+        self.setWindowTitle(self.tr('About {}'.format(name)))
+        self.lblName.setText('<h1>{}</h1>'.format(name))
+
+        self.lblLogo.setPixmap(QPixmap(os.path.join(pluginPath, *icon.split('/'))))
         self.lblVersion.setText(self.tr('Version: {}'.format(version)))
 
         doc = QTextDocument()
-        doc.setHtml(self.getAboutText())
+        doc.setHtml(self.aboutText(about, author, self.home, bugs))
         self.textBrowser.setDocument(doc)
         self.textBrowser.setOpenExternalLinks(True)
 
@@ -65,20 +70,17 @@ class AboutDialog(BASE, WIDGET):
     def openHelp(self):
         locale = QgsApplication.locale()
 
-        if locale == 'uk':
-            QDesktopServices.openUrl(QUrl('https://github.com/alexbruy/qtutor'))
+        if locale in ['uk']:
+            QDesktopServices.openUrl(QUrl(self.home))
         else:
-            QDesktopServices.openUrl(QUrl('https://github.com/alexbruy/qtutor'))
+            QDesktopServices.openUrl(QUrl(self.home))
 
-    def getAboutText(self):
+    def aboutText(self, about, author, home, bugs):
         return self.tr(
-            '<p>Run semi-interactive step-by-step lessons and '
-            'tutorials to learn QGIS and/or its plugins. Inspired '
-            'by Lessons plugin.</p>'
-            '<p><strong>Developers</strong>: Alexander Bruy</p>'
-            '<p><strong>Homepage</strong>: '
-            '<a href="https://github.com/alexbruy/qtutor">'
-            'https://github.com/alexbruy/qtutor</a></p>'
-            '<p>Please report bugs at '
-            '<a href="https://github.com/alexbruy/qtutor/issues">'
-            'bugtracker</a>.</p>')
+            '<p>{description}</p>'
+            '<p><strong>Developers</strong>: {developer}</p>'
+            '<p><strong>Homepage</strong>: <a href="{homepage}">{homepage}</a></p>'
+            '<p>Please report bugs at <a href="{bugtracker}">bugtracker</a>.</p>'.format(description=about,
+                                                                                         developer=author,
+                                                                                         homepage=home,
+                                                                                         bugtracker=bugs))
