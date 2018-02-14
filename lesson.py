@@ -28,6 +28,8 @@ __revision__ = '$Format:%H$'
 
 import os
 import importlib
+import importlib.util
+import traceback
 
 import yaml
 
@@ -113,7 +115,7 @@ class Lesson:
                          lambda: loadProject(projectFile),
                          stepType=LessonStep.StepType.Automated)
 
-    def addStep(self, name, description, prepDefition=None, execDefinition=None, checkDefinition=None,
+    def addStep(self, name, description, prepDefinition=None, execDefinition=None, checkDefinition=None,
                 stepType=LessonStep.StepType.Manual):
         description = self._findFile(description)
 
@@ -122,16 +124,16 @@ class Lesson:
         check = None
 
         parameters = dict()
-        if prepDefition is not None:
-            prepare, p = self._findFunction(prepDefition)
+        if prepDefinition is not None:
+            prepare, p = self._findFunction(prepDefinition)
             parameters[LessonStep.FunctionType.Prepare] = p
 
         if execDefinition is not None:
-            execute, p = self._findFunction(execDefition)
+            execute, p = self._findFunction(execDefinition)
             parameters[LessonStep.FunctionType.Execute] = p
 
         if checkDefinition is not None:
-            check, p = self._findFunction(checkDefition)
+            check, p = self._findFunction(checkDefinition)
             parameters[LessonStep.FunctionType.Check] = p
 
         step = LessonStep(name, description, prepare, execute, check, parameters)
@@ -169,7 +171,8 @@ class Lesson:
                     return path
 
         # lesson without i18n support, file located in the root
-        return os.path.join(self.root, fileName)
+        #return os.path.join(self.root, fileName)
+        return ''
 
     def _findFunction(self, definition):
         if isinstance(definition, dict):
@@ -182,10 +185,10 @@ class Lesson:
                 functionName = definition['name'].split('.')[1]
                 function = getattr(importlib.import_module('lessons.functions'), functionName)
             else:
-                spec = importlib.util.spec_from_file_location('functions', os.path.join(self.folder, 'functions.py'))
+                spec = importlib.util.spec_from_file_location('functions', os.path.join(self.root, 'functions.py'))
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
-                function = getattr(mod, definition['name'])
+                function = getattr(module, definition['name'])
 
             return function, params
         else:
@@ -201,7 +204,7 @@ class Lesson:
         with open(lessonFile, encoding='utf-8') as f:
             data = yaml.load(f)
 
-        name = data['lesson']['id']
+        name = data['lesson']['name']
         groupId = data['lesson']['groupId']
 
         if locale in data['lesson']:
@@ -210,7 +213,7 @@ class Lesson:
             definition = data['lesson']['en']
 
         lesson = Lesson(name,
-                        definition['name'],
+                        definition['displayName'],
                         groupId,
                         definition['group'],
                         definition['description'],
@@ -231,7 +234,7 @@ class Lesson:
                 try:
                     lesson.addMenuStep(step['menu'], name, description)
                 except Exception as e:
-                    QgsMessageLog.logMessage('Can not load lesson from {}:\n{}'.format(lessonFile, str(e)), 'QTutor')
+                    QgsMessageLog.logMessage('Can not load lesson from {}:\n{}'.format(lessonFile, traceback.format_exc()), 'QTutor')
                     return None
             else:
                 # all other steps
@@ -252,12 +255,12 @@ class Lesson:
                     lesson.addStep(step['name'], step['description'],
                                    prepare, execute, check)
                 except Exception as e:
-                    QgsMessageLog.logMessage('Can not load lesson from {}:\n{}'.format(lessonFile, str(e)), 'QTutor')
+                    QgsMessageLog.logMessage('Can not load lesson from {}:\n{}'.format(lessonFile, traceback.format_exc()), 'QTutor')
                     return None
 
         # add recommended lessons, if any
         if 'recommended' in definition:
             for r in definition['recommended']:
-                lesson.addRecommendation(r['id'], r['groupId'])
+                lesson.addRecommendation(r['name'], r['groupId'])
 
         return lesson

@@ -29,11 +29,12 @@ import os
 
 from qgis.PyQt.QtCore import QCoreApplication, QTranslator
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction
+from qgis.PyQt.QtWidgets import QAction, QMessageBox
 
 from qgis.gui import QgsOptionsWidgetFactory
 from qgis.core import QgsApplication
 
+from qtutor import lessonsRegistry
 from qtutor.gui.qtutorlibrarydialog import QTutorLibraryDialog
 from qtutor.gui.qtutoroptionswidget import QTutorOptionsPage
 from qtutor.gui.aboutdialog import AboutDialog
@@ -84,6 +85,8 @@ class QTutorPlugin:
 
         self.actionRun.triggered.connect(self.run)
         self.actionAbout.triggered.connect(self.about)
+
+        lessonsRegistry.loadLessons()
 
     def unload(self):
         self.iface.removePluginMenu(self.tr('QTutor'), self.actionRun)

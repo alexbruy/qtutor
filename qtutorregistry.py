@@ -32,6 +32,8 @@ from qgis.core import QgsApplication, QgsSettings
 from qtutor.lesson import Lesson
 from qtutor import utils
 
+pluginPath = os.path.dirname(__file__)
+
 
 class QTutorRegistry:
 
@@ -47,24 +49,33 @@ class QTutorRegistry:
     def loadLessons(self):
         hasErrors = False
 
-        # TODO: load built-in lessons
+        # load built-in lessons
+        for lessonDir in os.scandir(os.path.join(pluginPath, 'lessons')):
+            root = os.path.join(pluginPath, 'lessons', lessonDir.name)
+            if utils.isLesson(root):
+                lesson = Lesson.fromYaml(os.path.join(root, 'lesson.yaml'))
+                if lesson:
+                    self._addLesson(lesson)
+                else:
+                    hasErrors = True
 
         # load lessons from the user directory
         lessonsPath = QgsSettings().value('qtutor/lessonsPath',
                                           os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons'))
 
-        for groupDir in os.scandir(lessonsPath):
-            if groupDir.is_file:
-                continue
+        if os.path.exists(lessonsPath):
+            for groupDir in os.scandir(lessonsPath):
+                if groupDir.is_file:
+                    continue
 
-            for lessonDir in os.scandir(os.path.join(lessonsPath, groupDir)):
-                root = os.path.join(lessonsPath, groupDir, lessonDir)
-                if utils.isLesson(root):
-                    lesson = Lesson.fromYaml(os.path.join(root, 'lesson.yaml'))
-                    if lesson:
-                        self._addLesson(lesson)
-                    else:
-                        hasErrors = True
+                for lessonDir in os.scandir(os.path.join(lessonsPath, groupDir.name)):
+                    root = os.path.join(lessonsPath, groupDir.name, lessonDir.name)
+                    if utils.isLesson(root):
+                        lesson = Lesson.fromYaml(os.path.join(root, 'lesson.yaml'))
+                        if lesson:
+                            self._addLesson(lesson)
+                        else:
+                            hasErrors = True
 
         return hasErrors
 

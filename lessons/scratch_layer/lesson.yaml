@@ -1,0 +1,28 @@
+lesson:
+  name: scratchlayers
+  groupId: demo
+  en:
+    displayName: Scratch layers
+    group: Demo lessons
+    description: lesson.html
+    steps:
+        - menu: Layer|Create Layer|New Temporary Scratch Layer...
+          description: scratchlayer.html
+        - name: Configure new layer
+          description: configurelayer.html
+          check:
+            name: layerExists
+            params:
+              - points
+              - vector
+        - name: Add new feature
+          description: addfeature.html
+          execute:
+            name: addFeature
+          check:
+            name: checkFeatureCount
+            params:
+              - 1
+    recommended:
+        - name: somelesson
+          groupId: somegroup
