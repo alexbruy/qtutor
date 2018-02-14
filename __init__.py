@@ -26,6 +26,12 @@ __copyright__ = '(C) 2017, Alexander Bruy'
 __revision__ = '$Format:%H$'
 
 
+from qtutor.qtutorregistry import QTutorRegistry
+
+
+lessonsRegistry = QTutorRegistry()
+
+
 def classFactory(iface):
     from qtutor.qtutorplugin import QTutorPlugin
     return QTutorPlugin(iface)

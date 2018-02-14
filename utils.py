@@ -75,3 +75,7 @@ def findMenuItem(menuPath, subMenu, level):
                     menuAction = findMenuItem(menuPath, action, level + 1)
                 break
     return menuAction
+
+
+def isLesson(dirName):
+    return os.path.isdir(dirName) and os.path.isfile(os.path.join(dirName, "lesson.yaml"))
