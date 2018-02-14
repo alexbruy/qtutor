@@ -31,7 +31,7 @@ import importlib
 
 import yaml
 
-from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import Q_ENUMS, QCoreApplication
 from qgis.core import QgsApplication, QgsMessageLog
 
 from qtutor.functions import loadProject
@@ -42,16 +42,21 @@ SUPPORTED_VERSIONS = ('0.1')
 
 class LessonStep:
 
-    STEP_MANUAL = 0
-    STEP_MENU = 1
-    STEP_AUTOMATED = 2
+    class StepType:
+        Manual = 0
+        Menu = 1
+        Automated = 2
 
-    PREPARE_FUNCTION = 0
-    EXECUTE_FUNCTION = 1
-    CHECK_FUNCTION = 2
+    class FunctionType:
+        Prepare = 0
+        Execute = 1
+        Check = 2
+
+    Q_ENUMS(StepType)
+    Q_ENUMS(FunctionType)
 
     def __init__(self, name, description, prepare=None, execute=None,
-                 check=None, parameters=None, stepType=LessonStep.STEP_MANUAL):
+                 check=None, parameters=None, stepType=StepType.Manual):
         self.name = name
         self.description = description
 
@@ -66,11 +71,11 @@ class LessonStep:
     def runFunction(self, functionType):
         params = self.functionParameters(functionType)
 
-        if function == Step.PREPARE_FUNCTION:
+        if function == LessonStep.FunctionType.Prepare:
             return self.prepare(*params)
-        elif function == Step.EXECUTE_FUNCTION:
+        elif function == LessonStep.FunctionType.Execute:
             return self.execute(*params)
-        elif function == Step.CHECK_FUNCTION:
+        elif function == LessonStep.FunctionType.Check:
             return self.check(*params)
 
     def functionParameters(self, functionType):
@@ -89,11 +94,12 @@ class LessonStep:
 
 class Lesson:
 
-    def __init__(self, name, nameId, group, groupId, description, root=None):
-        self.nameId = nameId
-        self.groupId = groupId
-
+    def __init__(self, name, displayName, groupId, group, description, root=None):
         self.name = name
+        self.groupId = groupId
+        self.id = '{}:{}'.format(groupId, name)
+
+        self.displayName = displayName
         self.group = group
         self.description = description
         self.root = root
@@ -107,10 +113,10 @@ class Lesson:
             self.addStep(self.tr('Open project'),
                          self.tr('Open project with lesson data.'),
                          lambda: loadProject(projectFile),
-                         stepType=LessonStep.STEP_AUTOMATED)
+                         stepType=LessonStep.StepType.Automated)
 
     def addStep(self, name, description, prepDefition=None, execDefinition=None, checkDefinition=None,
-                stepType=LessonStep.STEP_MANUAL):
+                stepType=LessonStep.StepType.Manual):
         description = self._findFile(description)
 
         prepare = None
@@ -120,17 +126,17 @@ class Lesson:
         parameters = dict()
         if prepDefition is not None:
             prepare, p = self._findFunction(prepDefition)
-            parameters[LessonStep.PREPARE_FUNCTION] = p
+            parameters[LessonStep.FunctionType.Prepare] = p
 
         if execDefinition is not None:
             execute, p = self._findFunction(execDefition)
-            parameters[LessonStep.EXECUTE_FUNCTION] = p
+            parameters[LessonStep.FunctionType.Execute] = p
 
         if checkDefinition is not None:
             check, p = self._findFunction(checkDefition)
-            parameters[LessonStep.CHECK_FUNCTION] = p
+            parameters[LessonStep.FunctionType.Check] = p
 
-        step = Step(name, description, prepare, execute, check, parameters)
+        step = LessonStep(name, description, prepare, execute, check, parameters)
         self.steps.append(step)
 
     def addMenuStep(self, menuString, name=None, description=None):
@@ -139,20 +145,10 @@ class Lesson:
         if action is None:
            raise Exception('Menu "{}" not found.'.format(menuString))
 
-        if 'name' in definition:
-            name = definition['name']
-        else:
-            name = ''
-
-        if 'description' in definition:
-            description = definition['description']
-        else:
-            description = ''
-
         def _menuClicked(sender):
             return sender.text() == action.text()
 
-        step = Step(name, description, stepType=LessonStep.STEP_MENU)
+        step = LessonStep(name, description, stepType=LessonStep.StepType.Menu)
         step.addSignalHandler(action.triggered, _menuClicked)
         self.steps.append(step)
 
@@ -179,10 +175,10 @@ class Lesson:
 
     def _findFunction(self, definition):
         if isinstance(definition, dict):
-             if 'params' in definition:
-                 params = tuple(definition['params'])
-             else:
-                 params = tuple()
+            if 'params' in definition:
+                params = tuple(definition['params'])
+            else:
+                params = tuple()
 
             if definition['name'].startswith('utils.'):
                 functionName = definition['name'].split('.')[1]
@@ -207,23 +203,18 @@ class Lesson:
         with open(lessonFile, encoding='utf-8') as f:
             data = yaml.load(f)
 
-        if definition['version'] not in SUPPORTED_VERSIONS:
-            QgsMessageLog.logMessage('Can not load lesson from {}:\n'
-                                     'Unsupported lesson version'.format(lessonFile), 'QTutor')
-            return None
+        name = data['lesson']['id']
+        groupId = data['lesson']['groupId']
 
-        nameId = definition['nameId']
-        groupId = definition['groupId']
-
-        if locale in definition['lesson']:
+        if locale in data['lesson']:
             definition = data['lesson'][locale]
         else:
             definition = data['lesson']['en']
 
-        lesson = Lesson(definition['name'],
-                        nameId,
-                        definition['group'],
+        lesson = Lesson(name,
+                        definition['name'],
                         groupId,
+                        definition['group'],
                         definition['description'],
                         os.path.abspath(os.path.dirname(lessonFile)))
 
@@ -269,6 +260,6 @@ class Lesson:
         # add recommended lessons, if any
         if 'recommended' in definition:
             for r in definition['recommended']:
-                lesson.addRecommendation(r['nameId'], r['groupId'])
+                lesson.addRecommendation(r['id'], r['groupId'])
 
         return lesson
