@@ -47,8 +47,6 @@ class QTutorRegistry:
         return cls.instance
 
     def loadLessons(self):
-        hasErrors = False
-
         # load built-in lessons
         for lessonDir in os.scandir(os.path.join(pluginPath, 'lessons')):
             root = os.path.join(pluginPath, 'lessons', lessonDir.name)
@@ -56,8 +54,6 @@ class QTutorRegistry:
                 lesson = Lesson.fromYaml(os.path.join(root, 'lesson.yaml'))
                 if lesson:
                     self._addLesson(lesson)
-                else:
-                    hasErrors = True
 
         # load lessons from the user directory
         lessonsPath = QgsSettings().value('qtutor/lessonsPath',
@@ -74,10 +70,6 @@ class QTutorRegistry:
                         lesson = Lesson.fromYaml(os.path.join(root, 'lesson.yaml'))
                         if lesson:
                             self._addLesson(lesson)
-                        else:
-                            hasErrors = True
-
-        return hasErrors
 
     def addLessonsDirectory(self, directory):
         for entry in os.scandir(directory):
