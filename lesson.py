@@ -37,8 +37,6 @@ from qgis.core import QgsApplication, QgsMessageLog
 from qtutor.functions import loadProject
 from qtutor.utils import menuByName
 
-SUPPORTED_VERSIONS = ('0.1')
-
 
 class LessonStep:
 
@@ -143,7 +141,7 @@ class Lesson:
         action = menuByName(menuString)
 
         if action is None:
-           raise Exception('Menu "{}" not found.'.format(menuString))
+           raise Exception('Can not find menu "{}".'.format(menuString))
 
         def _menuClicked(sender):
             return sender.text() == action.text()
@@ -180,11 +178,11 @@ class Lesson:
             else:
                 params = tuple()
 
-            if definition['name'].startswith('utils.'):
+            if definition['name'].startswith('functions.'):
                 functionName = definition['name'].split('.')[1]
-                function = getattr(importlib.import_module('lessons.utils'), functionName)
+                function = getattr(importlib.import_module('lessons.functions'), functionName)
             else:
-                spec = importlib.util.spec_from_file_location('helpers', os.path.join(self.folder, 'helpers.py'))
+                spec = importlib.util.spec_from_file_location('functions', os.path.join(self.folder, 'functions.py'))
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
                 function = getattr(mod, definition['name'])

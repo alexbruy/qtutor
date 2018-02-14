@@ -31,12 +31,12 @@ import tempfile
 
 from qgis.utils import iface
 
-from qtutor.utils import tempDirectory
+from qtutor import utils
 
 
 def loadProject(projectPath):
     root = os.path.dirname(projectPath)
     fileName = os.path.basename(projectPath)
-    tmp = tempfile.mkdtemp(prefix='qtutor', dir=tempDirectory())
+    tmp = tempfile.mkdtemp(prefix='qtutor', dir=utils.tempDirectory())
     shutil.copytree(root, tmp)
     iface.addProject(os.path.join(tmp, fileName))
