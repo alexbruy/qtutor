@@ -91,4 +91,4 @@ class QTutorRegistry:
     def _removeLesson(self, lesson):
         for i in self.lessons:
             if i.id == lesson.id:
-                self.lessons.remove(lesson)
+                self.lessons.remove(i)
