@@ -143,7 +143,7 @@ class Lesson:
         action = menuByName(menuString)
 
         if action is None:
-           raise Exception('Can not find menu "{}".'.format(menuString))
+           raise Exception(self.tr('Can not find menu "{}".'.format(menuString)))
 
         def _menuClicked(sender):
             return sender.text() == action.text()
@@ -234,7 +234,7 @@ class Lesson:
                 try:
                     lesson.addMenuStep(step['menu'], name, description)
                 except Exception as e:
-                    QgsMessageLog.logMessage('Can not load lesson from {}:\n{}'.format(lessonFile, traceback.format_exc()), 'QTutor')
+                    QgsMessageLog.logMessage(self.tr('Can not load lesson from {}:\n{}'.format(lessonFile, traceback.format_exc())), 'QTutor')
                     return None
             else:
                 # all other steps
@@ -255,7 +255,7 @@ class Lesson:
                     lesson.addStep(step['name'], step['description'],
                                    prepare, execute, check)
                 except Exception as e:
-                    QgsMessageLog.logMessage('Can not load lesson from {}:\n{}'.format(lessonFile, traceback.format_exc()), 'QTutor')
+                    QgsMessageLog.logMessage(self.tr('Can not load lesson from {}:\n{}'.format(lessonFile, traceback.format_exc())), 'QTutor')
                     return None
 
         # add recommended lessons, if any
