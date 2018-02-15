@@ -29,10 +29,11 @@ import os
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QDialog, QDockWidget, QMessageBox, QTreeWidgetItem
 
 from qgis.gui import QgsGui
-from qgis.core import QgsSettings
+from qgis.core import QgsSettings, QgsApplication
 from qgis.utils import iface, OverrideCursor
 
 from qtutor import lessonsRegistry
@@ -52,6 +53,12 @@ class QTutorLibraryDialog(BASE, WIDGET):
         self.btnAddLessons.clicked.connect(self.addLessons)
         self.btnRemoveLessons.clicked.connect(self.removeLessons)
         self.btnStartLesson.clicked.connect(self.startLesson)
+
+        self.treeLessons.itemExpanded.connect(self.updateIcon)
+        self.treeLessons.itemCollapsed.connect(self.updateIcon)
+
+        self.iconExpanded = QgsApplication.getThemeIcon('/mActionFileOpen.svg')
+        self.iconCollapsed = QIcon(os.path.join(pluginPath, 'icons', 'folderClosed.svg'))
 
         self.dock = QTutorDock()
         self.dock.lessonFinished.connect(self.showLibrary)
@@ -105,6 +112,7 @@ class QTutorLibraryDialog(BASE, WIDGET):
         for groupId, groupName in lessonsRegistry.groups.items():
             groupItem = QTreeWidgetItem(self.treeLessons)
             groupItem.setText(0, groupName)
+            groupItem.setIcon(0, self.iconCollapsed)
             groupItem.setData(0, Qt.UserRole, groupId)
             for lessonId, lesson in lessonsRegistry.lessons[groupId].items():
                 lessonItem = QTreeWidgetItem(groupItem)
@@ -112,3 +120,9 @@ class QTutorLibraryDialog(BASE, WIDGET):
                 lessonItem.setData(0, Qt.UserRole, lessonId)
 
             self.treeLessons.addTopLevelItem(groupItem)
+
+    def updateIcon(self, item):
+        if item.isExpanded():
+            item.setIcon(0, self.iconExpanded)
+        else:
+            item.setIcon(0, self.iconCollapsed)
