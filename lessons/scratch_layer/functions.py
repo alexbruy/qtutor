@@ -1,4 +1,4 @@
-from qgis.core import Qgsproject, QgsMapLayer, QgsFeature
+from qgis.core import QgsProject, QgsMapLayer, QgsFeature
 from qgis.utils import iface
 
 

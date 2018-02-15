@@ -55,7 +55,7 @@ class QTutorRegistry:
 
         # load lessons from the user directory
         lessonsPath = QgsSettings().value('qtutor/lessonsPath',
-                                          os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons'))
+                                          os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons'), str)
 
         if os.path.exists(lessonsPath):
             for groupDir in os.scandir(lessonsPath):
@@ -85,7 +85,7 @@ class QTutorRegistry:
     def installLessons(self, filePath):
         # TODO: allow multiple groups inside archive
         lessonsPath = QgsSettings().value('qtutor/lessonsPath',
-                                          os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons'))
+                                          os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons'), str)
 
         with zipfile.ZipFile(filePath, 'r') as zf:
             zf.extractall(lessonsPath)
@@ -98,7 +98,7 @@ class QTutorRegistry:
         lesson = self.lessonById(lessonId)
         if lesson:
             lessonsPath = QgsSettings().value('qtutor/lessonsPath',
-                                              os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons'))
+                                              os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons'), str)
             # only user lessons can be uninstalled
             if not lesson.root.startswith(lessonsPath):
                 QgsMessageLog.logMessage(self.tr('Lesson "{}" is not a user lesson and can not be uninstalled.'.format(lesson.name)))
@@ -120,7 +120,7 @@ class QTutorRegistry:
     def _addLesson(self, lesson):
         groupId = lesson.groupId
         if groupId not in self.groups:
-            self.groups[groupId] = []
+            self.groups[groupId] = lesson.group
             self.lessons[groupId] = {}
 
         if lesson.name in self.lessons[groupId]:
