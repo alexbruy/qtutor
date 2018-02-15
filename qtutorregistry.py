@@ -70,9 +70,9 @@ class QTutorRegistry:
     def removeLessonsDirectory(self, directory):
         for entry in os.scandir(directory):
             if utils.isLesson(os.path.join(directory, entry.name)):
-                lesson = Lesson.fromYaml(os.path.join(directory, entry.name, 'lesson.yaml'))
-                if lesson:
-                    self._removeLesson(lesson)
+                lessonId = Lesson.idFromYaml(os.path.join(directory, entry.name, 'lesson.yaml'))
+                if lessonId:
+                    self._removeLesson(lessonId)
 
     def lessonById(self, lessonId):
         group, name = lessonId.split(':')
@@ -129,13 +129,13 @@ class QTutorRegistry:
 
         self.lessons[groupId][lesson.name] = lesson
 
-    def _removeLesson(self, lesson):
-        groupId = lesson.groupId
+    def _removeLesson(self, lessonId):
+        groupId, name = lessonId.split(":")
         if groupId not in self.groups:
             return
 
-        if lesson.name in self.lessons[groupId]:
-            del self.lessons[groupId][lesson.name]
+        if name in self.lessons[groupId]:
+            del self.lessons[groupId][name]
             if len(self.lessons[groupId]) == 0:
                 del self.lessons[groupId]
                 del self.groups[groupId]

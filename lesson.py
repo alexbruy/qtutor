@@ -264,3 +264,12 @@ class Lesson:
                 lesson.addRecommendation(r['name'], r['groupId'])
 
         return lesson
+
+    @staticmethod
+    def idFromYaml(lessonFile):
+        with open(lessonFile, encoding='utf-8') as f:
+            data = yaml.load(f)
+
+        name = data['lesson']['name']
+        groupId = data['lesson']['groupId']
+        return '{}:{}'.format(group, name)
