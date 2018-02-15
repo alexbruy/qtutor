@@ -29,12 +29,13 @@ import os
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import QDialog, QDockWidget, QMessageBox
+from qgis.PyQt.QtWidgets import QDialog, QDockWidget, QMessageBox, QTreeWidgetItem
 
 from qgis.gui import QgsGui
 from qgis.core import QgsSettings
-from qgis.utils import iface
+from qgis.utils import iface, OverrideCursor
 
+from qtutor import lessonsRegistry
 from qtutor.gui.qtutordock import QTutorDock
 
 pluginPath = os.path.split(os.path.dirname(__file__))[0]
@@ -55,11 +56,26 @@ class QTutorLibraryDialog(BASE, WIDGET):
         self.dock = QTutorDock()
         self.dock.lessonFinished.connect(self.showLibrary)
 
+        self.populateTree()
+
     def addLessons(self):
-        pass
+        settings = QgsSettings()
+        lastDirectory = settings.value('qtutor/lastLessonDirectory', os.path.expanduser('~'), str)
+        fileName, _ = QgsFileDialog.getOpenFileName(self,
+                                                    self.tr('Select file'),
+                                                    lastDirectory,
+                                                    self.tr('ZIP archives (*.zip *.ZIP)')
+                                                   )
+        if fileName:
+            with OverrideCursor(Qt.WaitCursor):
+                settings.setValue('qtutor/lastLessonDirectory', os.path.dirname(fileName))
+                lessonsRegistry.installLessons(fileName)
+                self.populateTree()
 
     def removeLessons(self):
-        pass
+        item = self.treeLessons.currentItem()
+        # TODO: get lesson from item and uninstall it
+        #lessonsRegistry.uninstallLesson()
 
     def startLesson(self):
         if self.dock.running:
@@ -82,3 +98,17 @@ class QTutorLibraryDialog(BASE, WIDGET):
 
     def reject(self):
         QDialog.reject(self)
+
+    def populateTree(self):
+        self.treeLessons.clear()
+
+        for groupId, groupName in lessonsRegistry.groups.items():
+            groupItem = QTreeWidgetItem(self.treeLessons)
+            groupItem.setText(0, groupName)
+            groupItem.setData(0, Qt.UserRole, groupId)
+            for lessonId, lesson in lessonsRegistry.lessons[groupId].items():
+                lessonItem = QTreeWidgetItem(groupItem)
+                lessonItem.setText(0, lesson.displayName)
+                lessonItem.setData(0, Qt.UserRole, lessonId)
+
+            self.treeLessons.addTopLevelItem(groupItem)
