@@ -38,7 +38,8 @@ pluginPath = os.path.dirname(__file__)
 class QTutorRegistry:
 
     def __init__(self):
-        self.lessons = list()
+        self.groups = dict()
+        self.lessons = dict()
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
@@ -48,12 +49,7 @@ class QTutorRegistry:
 
     def loadLessons(self):
         # load built-in lessons
-        for lessonDir in os.scandir(os.path.join(pluginPath, 'lessons')):
-            root = os.path.join(pluginPath, 'lessons', lessonDir.name)
-            if utils.isLesson(root):
-                lesson = Lesson.fromYaml(os.path.join(root, 'lesson.yaml'))
-                if lesson:
-                    self._addLesson(lesson)
+        self._loadFromDirectory(os.path.join(pluginPath, 'lessons'))
 
         # load lessons from the user directory
         lessonsPath = QgsSettings().value('qtutor/lessonsPath',
@@ -64,19 +60,10 @@ class QTutorRegistry:
                 if groupDir.is_file:
                     continue
 
-                for lessonDir in os.scandir(os.path.join(lessonsPath, groupDir.name)):
-                    root = os.path.join(lessonsPath, groupDir.name, lessonDir.name)
-                    if utils.isLesson(root):
-                        lesson = Lesson.fromYaml(os.path.join(root, 'lesson.yaml'))
-                        if lesson:
-                            self._addLesson(lesson)
+                self._loadFromDirectory(os.path.join(lessonsPath, groupDir.name))
 
     def addLessonsDirectory(self, directory):
-        for entry in os.scandir(directory):
-            if utils.isLesson(os.path.join(directory, entry.name)):
-                lesson = Lesson.fromYaml(os.path.join(directory, entry.name, 'lesson.yaml'))
-                if lesson:
-                    self._addLesson(lesson)
+        self._loadFromDirectory(directory)
 
     def removeLessonsDirectory(self, directory):
         for entry in os.scandir(directory):
@@ -85,13 +72,44 @@ class QTutorRegistry:
                 if lesson:
                     self._removeLesson(lesson)
 
+    def lessonById(self, lessonId):
+        group, name = lessonId.split(':')
+
+        if group in self.lessons and name in self.lessons[group]:
+            return self.lessons[group][name]
+
+        return None
+
+    def _loadFromDirectory(self, directory):
+        for lessonDir in os.scandir(directory):
+            root = os.path.join(directory, lessonDir.name)
+            if utils.isLesson(root):
+                lesson = Lesson.fromYaml(os.path.join(root, 'lesson.yaml'))
+                if lesson:
+                    self._addLesson(lesson)
+
     def _addLesson(self, lesson):
-        for i in self.lessons:
-            if i.id == lesson.id:
-                return
-        self.lessons.append(lesson)
+        groupId = lesson.groupId
+        if groupId not in self.groups:
+            self.groups[groupId] = []
+            self.lessons[groupId] = {}
+
+        if lesson.name in self.lessons[groupId]:
+            QgsMessageLog.logMessage(self.tr('Duplicate lesson name "{}" for group "{}"'.format(lesson.name, groupId)))
+            return
+
+        self.lessons[groupId][lesson.name] = lesson
 
     def _removeLesson(self, lesson):
-        for i in self.lessons:
-            if i.id == lesson.id:
-                self.lessons.remove(i)
+        groupId = lesson.groupId
+        if groupId not in self.groups:
+            return
+
+        if lesson.name in self.lessons[groupId]:
+            del self.lessons[groupId][lesson.name]
+            if len(self.lessons[groupId]) == 0:
+                del self.lessons[groupId]
+                del self.groups[groupId]
+
+    def tr(self, text):
+        return QCoreApplication.translate('QTutorRegistry', text)
