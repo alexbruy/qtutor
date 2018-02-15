@@ -83,7 +83,7 @@ class QTutorRegistry:
         return None
 
     def installLessons(self, filePath):
-        #TODO: allow multiple groups inside archive
+        # TODO: allow multiple groups inside archive
         lessonsPath = QgsSettings().value('qtutor/lessonsPath',
                                           os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons'))
 
@@ -92,14 +92,22 @@ class QTutorRegistry:
 
         dirName = os.path.splitext(filePath)[0]
         self._loadFromDirectory(os.path.join(lessonsPath, dirName))
+        return True
 
     def uninstallLesson(self, lessonId):
         lesson = self.lessonById(lessonId)
         if lesson:
-            #TODO: check if lesson is a plugin lesson
+            lessonsPath = QgsSettings().value('qtutor/lessonsPath',
+                                              os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons'))
+            # only user lessons can be uninstalled
+            if not lesson.root.startswith(lessonsPath):
+                QgsMessageLog.logMessage(self.tr('Lesson "{}" is not a user lesson and can not be uninstalled.'.format(lesson.name)))
+                return False
+
             rootDirectory = lesson.root
             self._removeLesson(lesson)
             shutil.rmtree(rootDirectory)
+            return True
 
     def _loadFromDirectory(self, directory):
         for lessonDir in os.scandir(directory):
