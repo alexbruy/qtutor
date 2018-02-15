@@ -26,6 +26,8 @@ __copyright__ = '(C) 2017, Alexander Bruy'
 __revision__ = '$Format:%H$'
 
 import os
+import shutil
+import zipfile
 
 from qgis.core import QgsApplication, QgsSettings
 
@@ -79,6 +81,25 @@ class QTutorRegistry:
             return self.lessons[group][name]
 
         return None
+
+    def installLessons(self, filePath):
+        #TODO: allow multiple groups inside archive
+        lessonsPath = QgsSettings().value('qtutor/lessonsPath',
+                                          os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons'))
+
+        with zipfile.ZipFile(filePath, 'r') as zf:
+            zf.extractall(lessonsPath)
+
+        dirName = os.path.splitext(filePath)[0]
+        self._loadFromDirectory(os.path.join(lessonsPath, dirName))
+
+    def uninstallLesson(self, lessonId):
+        lesson = self.lessonById(lessonId)
+        if lesson:
+            #TODO: check if lesson is a plugin lesson
+            rootDirectory = lesson.root
+            self._removeLesson(lesson)
+            shutil.rmtree(rootDirectory)
 
     def _loadFromDirectory(self, directory):
         for lessonDir in os.scandir(directory):
