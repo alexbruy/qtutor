@@ -144,8 +144,12 @@ class QTutorLibraryDialog(BASE, WIDGET):
         else:
             lesson = lessonsRegistry.lessonById(current.data(0, Qt.UserRole))
             if lesson:
-                url = QUrl(lesson.description)
-                self.txtInfo.document().setMetaInformation(QTextDocument.DocumentUrl,
-                                                           os.path.dirname(url.toString()))
-                self.txtInfo.setSource(url)
+                if os.path.exists(lesson.description):
+                    url = QUrl.fromUserInput(lesson.description)
+                    self.txtInfo.document().setMetaInformation(QTextDocument.DocumentUrl,
+                                                               os.path.dirname(url.toString()))
+                    self.txtInfo.setSource(url)
+                else:
+                    self.txtInfo.setHtml(lesson.description)
+
                 self.btnStartLesson.setEnabled(True)
