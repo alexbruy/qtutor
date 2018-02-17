@@ -1,4 +1,4 @@
-from qgis.core import QgsProject, QgsMapLayer, QgsFeature
+from qgis.core import QgsProject, QgsMapLayer, QgsFeature, QgsGeometry, QgsPointXY
 from qgis.utils import iface
 
 
@@ -25,8 +25,8 @@ def addFeature():
     f = QgsFeature()
     f.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(8.6866, 45.7940)))
     provider.addFeature(f)
-    l.commitChanges()
-    l.updateExtents()
+    layer.commitChanges()
+    layer.updateExtents()
     return True
 
 
