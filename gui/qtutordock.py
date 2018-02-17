@@ -36,6 +36,7 @@ from qgis.core import QgsApplication
 from qgis.utils import iface, OverrideCursor
 
 from qtutor.lesson import LessonStep
+from qtutor.gui.qtutorfinisheddialog import QTutorFinishedDialog
 
 pluginPath = os.path.split(os.path.dirname(__file__))[0]
 WIDGET, BASE = uic.loadUiType(os.path.join(pluginPath, 'ui', 'qtutordockbase.ui'))
@@ -129,8 +130,14 @@ class QTutorDock(BASE, WIDGET):
         # this was the last step, lesson finished
         if self.currentStep == len(self.lesson.steps):
             # TODO: show completion message and recommended lessons
-            self.running = False
-            self.lessonFinished.emit()
+            dlg = QTutorFinishedDialog(iface.mainWindow())
+            #dlg.setRecommended()
+            result = dlg.exec_()
+            if result:
+                self.startLesson(dlg.lesson)
+            else:
+                self.running = False
+                self.lessonFinished.emit()
         else:
             # last but one step, change "Next" button title
             if self.currentStep == len(self.lesson.steps) - 1:
