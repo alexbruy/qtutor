@@ -23,7 +23,7 @@ def addFeature():
     layer = iface.activeLayer()
     provider = layer.dataProvider()
     f = QgsFeature()
-    f.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(8.6866, 45.7940)))
+    f.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(18.6866, 45.7940)))
     provider.addFeature(f)
     layer.commitChanges()
     layer.updateExtents()
