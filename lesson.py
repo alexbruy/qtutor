@@ -65,21 +65,23 @@ class LessonStep:
         self.check = check
         self.parameters = parameters
 
+        self.type = stepType
+
         self.signals = None
         self.handlers = None
 
     def runFunction(self, functionType):
         params = self.functionParameters(functionType)
 
-        if function == LessonStep.FunctionType.Prepare:
+        if functionType == LessonStep.FunctionType.Prepare:
             return self.prepare(*params)
-        elif function == LessonStep.FunctionType.Execute:
+        elif functionType == LessonStep.FunctionType.Execute:
             return self.execute(*params)
-        elif function == LessonStep.FunctionType.Check:
+        elif functionType == LessonStep.FunctionType.Check:
             return self.check(*params)
 
     def functionParameters(self, functionType):
-        if functionType in self.parameterss:
+        if functionType in self.parameters:
             return self.parameters[functionType]
         else:
             return tuple()
@@ -113,13 +115,11 @@ class Lesson:
         if os.path.isfile(projectFile):
             self.addStep(self.tr('Open project'),
                          self.tr('Open project with lesson data.'),
-                         lambda: loadProject(projectFile),
+                         execDefinition=lambda: loadProject(projectFile),
                          stepType=LessonStep.StepType.Automated)
 
     def addStep(self, name, description, prepDefinition=None, execDefinition=None, checkDefinition=None,
                 stepType=LessonStep.StepType.Manual):
-        description = self._findFile(description)
-
         prepare = None
         execute = None
         check = None
@@ -137,7 +137,9 @@ class Lesson:
             check, p = self._findFunction(checkDefinition)
             parameters[LessonStep.FunctionType.Check] = p
 
-        step = LessonStep(name, description, prepare, execute, check, parameters)
+        description = self._findFile(description)
+
+        step = LessonStep(name, description, prepare, execute, check, parameters, stepType)
         self.steps.append(step)
 
     def addMenuStep(self, menuString, name='', description=''):
@@ -149,7 +151,9 @@ class Lesson:
         if not name:
             name = 'Click on menu item'
 
-        if not description:
+        if description:
+            description = self._findFile(description)
+        else:
             description = 'Go to menu "{}". Once you click lesson will move to the next step.'.format(menuString.replace('&', '').replace('|', '→'))
 
         def _menuClicked(sender):
@@ -168,6 +172,9 @@ class Lesson:
     def _findFile(self, fileName):
         if fileName is None:
             return ''
+
+        if os.path.splitext(fileName)[1] != '.html':
+            return fileName
 
         for locale in [QgsApplication.locale(), 'en']:
             # first look for a localized version and fallback
@@ -253,7 +260,7 @@ class Lesson:
                     prepare = step['prepare']
 
                 if 'execute' in step:
-                    rxecute = step['execute']
+                    execute = step['execute']
 
                 if 'check' in step:
                     check = step['check']

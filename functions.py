@@ -27,7 +27,7 @@ __revision__ = '$Format:%H$'
 
 import os
 import shutil
-import tempfile
+import uuid
 
 from qgis.utils import iface
 
@@ -37,6 +37,6 @@ from qtutor import utils
 def loadProject(projectPath):
     root = os.path.dirname(projectPath)
     fileName = os.path.basename(projectPath)
-    tmp = tempfile.mkdtemp(prefix='qtutor', dir=utils.tempDirectory())
+    tmp = os.path.join(utils.tempDirectory(), uuid.uuid4().hex)
     shutil.copytree(root, tmp)
     iface.addProject(os.path.join(tmp, fileName))
