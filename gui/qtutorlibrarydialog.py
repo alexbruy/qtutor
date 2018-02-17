@@ -28,8 +28,8 @@ __revision__ = '$Format:%H$'
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtCore import Qt, QUrl
+from qgis.PyQt.QtGui import QIcon, QTextDocument
 from qgis.PyQt.QtWidgets import QDialog, QDockWidget, QMessageBox, QTreeWidgetItem
 
 from qgis.gui import QgsGui
@@ -44,6 +44,10 @@ WIDGET, BASE = uic.loadUiType(os.path.join(pluginPath, 'ui', 'qtutorlibrarydialo
 
 
 class QTutorLibraryDialog(BASE, WIDGET):
+
+    GROUP_ITEM = QTreeWidgetItem.UserType
+    LESSON_ITEM = QTreeWidgetItem.UserType + 1
+
     def __init__(self, parent=None):
         super(QTutorLibraryDialog, self).__init__(parent)
         self.setupUi(self)
@@ -56,6 +60,7 @@ class QTutorLibraryDialog(BASE, WIDGET):
 
         self.treeLessons.itemExpanded.connect(self.updateIcon)
         self.treeLessons.itemCollapsed.connect(self.updateIcon)
+        self.treeLessons.currentItemChanged.connect(self.updateInformation)
 
         self.iconExpanded = QgsApplication.getThemeIcon('/mActionFileOpen.svg')
         self.iconCollapsed = QIcon(os.path.join(pluginPath, 'icons', 'folderClosed.svg'))
@@ -110,12 +115,12 @@ class QTutorLibraryDialog(BASE, WIDGET):
         self.treeLessons.clear()
 
         for groupId, groupName in lessonsRegistry.groups.items():
-            groupItem = QTreeWidgetItem(self.treeLessons)
+            groupItem = QTreeWidgetItem(self.treeLessons, self.GROUP_ITEM)
             groupItem.setText(0, groupName)
             groupItem.setIcon(0, self.iconCollapsed)
             groupItem.setData(0, Qt.UserRole, groupId)
             for lessonId, lesson in lessonsRegistry.lessons[groupId].items():
-                lessonItem = QTreeWidgetItem(groupItem)
+                lessonItem = QTreeWidgetItem(groupItem, self.LESSON_ITEM)
                 lessonItem.setText(0, lesson.displayName)
                 lessonItem.setData(0, Qt.UserRole, lessonId)
 
@@ -126,3 +131,14 @@ class QTutorLibraryDialog(BASE, WIDGET):
             item.setIcon(0, self.iconExpanded)
         else:
             item.setIcon(0, self.iconCollapsed)
+
+    def updateInformation(self, current, previous):
+        if current.type() == self.GROUP_ITEM:
+            pass
+        else:
+            lesson = lessonsRegistry.lessonById(current.data(0, Qt.UserRole))
+            if lesson:
+                url = QUrl(lesson.description)
+                self.txtInfo.document().setMetaInformation(QTextDocument.DocumentUrl,
+                                                           os.path.dirname(url.toString()))
+                self.txtInfo.setSource(url)

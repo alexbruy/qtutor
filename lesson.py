@@ -99,10 +99,11 @@ class Lesson:
         self.groupId = groupId
         self.id = '{}:{}'.format(groupId, name)
 
+        self.root = root
+
         self.displayName = displayName
         self.group = group
-        self.description = description
-        self.root = root
+        self.description = self._findFile(description)
 
         self.steps = list()
         self.recommended = list()

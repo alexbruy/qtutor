@@ -77,8 +77,8 @@ class QTutorRegistry:
     def lessonById(self, lessonId):
         group, name = lessonId.split(':')
 
-        if group in self.lessons and name in self.lessons[group]:
-            return self.lessons[group][name]
+        if group in self.lessons and lessonId in self.lessons[group]:
+            return self.lessons[group][lessonId]
 
         return None
 
@@ -127,7 +127,7 @@ class QTutorRegistry:
             QgsMessageLog.logMessage(self.tr('Duplicate lesson name "{}" for group "{}"'.format(lesson.name, groupId)))
             return
 
-        self.lessons[groupId][lesson.name] = lesson
+        self.lessons[groupId][lesson.id] = lesson
 
     def _removeLesson(self, lessonId):
         groupId, name = lessonId.split(":")
