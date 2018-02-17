@@ -100,9 +100,12 @@ class QTutorLibraryDialog(BASE, WIDGET):
                                         'lesson and try again.'))
             return
 
-        area = QgsSettings().value('qtutor/dockArea', Qt.RightDockWidgetArea)
-        iface.addDockWidget(area, self.dock)
-        self.showMinimized()
+        lesson = lessonsRegistry.lessonById(self.treeLessons.currentItem().data(0, Qt.UserRole))
+        if lesson:
+            area = QgsSettings().value('qtutor/dockArea', Qt.RightDockWidgetArea)
+            iface.addDockWidget(area, self.dock)
+            self.showMinimized()
+            self.dock.startLesson(lesson)
 
     def showLibrary(self):
         iface.removeDockWidget(self.dock)

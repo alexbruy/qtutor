@@ -29,7 +29,7 @@ import os
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSignal
-from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtWidgets import QMessageBox, QListWidgetItem
 from qgis.utils import iface
 
 pluginPath = os.path.split(os.path.dirname(__file__))[0]
@@ -49,7 +49,15 @@ class QTutorDock(BASE, WIDGET):
         self.btnRestartLesson.clicked.connect(self.restartLesson)
         self.btnQuitLesson.clicked.connect(self.quitLesson)
 
+        self.lesson = None
         self.running = False
+
+    def startLesson(self, lesson):
+        self.lesson = lesson
+
+        self.lblLessonName.setText(lesson.displayName)
+        for step in lesson.steps:
+            item = QListWidgetItem(step.name, self.lstSteps)
 
     def nextStep(self):
         pass
