@@ -140,11 +140,17 @@ class Lesson:
         step = LessonStep(name, description, prepare, execute, check, parameters)
         self.steps.append(step)
 
-    def addMenuStep(self, menuString, name=None, description=None):
+    def addMenuStep(self, menuString, name='', description=''):
         action = menuByName(menuString)
 
         if action is None:
            raise Exception(self.tr('Can not find menu "{}".'.format(menuString)))
+
+        if not name:
+            name = 'Click on menu item'
+
+        if not description:
+            description = 'Go to menu "{}". Once you click lesson will move to the next step.'.format(menuString.replace('&', '').replace('|', '→'))
 
         def _menuClicked(sender):
             return sender.text() == action.text()
