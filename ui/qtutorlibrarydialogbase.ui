@@ -60,7 +60,7 @@
        <item row="1" column="1">
         <widget class="QPushButton" name="btnRemoveLessons">
          <property name="text">
-          <string>Remove lessons</string>
+          <string>Remove lesson(s)</string>
          </property>
         </widget>
        </item>

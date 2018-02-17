@@ -68,6 +68,8 @@ class QTutorLibraryDialog(BASE, WIDGET):
         self.dock = QTutorDock()
         self.dock.lessonFinished.connect(self.showLibrary)
 
+        self.btnStartLesson.setEnabled(False)
+
         self.populateTree()
 
     def addLessons(self):
@@ -134,7 +136,8 @@ class QTutorLibraryDialog(BASE, WIDGET):
 
     def updateInformation(self, current, previous):
         if current.type() == self.GROUP_ITEM:
-            pass
+            self.txtInfo.clear()
+            self.btnStartLesson.setEnabled(False)
         else:
             lesson = lessonsRegistry.lessonById(current.data(0, Qt.UserRole))
             if lesson:
@@ -142,3 +145,4 @@ class QTutorLibraryDialog(BASE, WIDGET):
                 self.txtInfo.document().setMetaInformation(QTextDocument.DocumentUrl,
                                                            os.path.dirname(url.toString()))
                 self.txtInfo.setSource(url)
+                self.btnStartLesson.setEnabled(True)
