@@ -46,6 +46,9 @@ class QTutorFinishedDialog(BASE, WIDGET):
         self.txtRecommended.anchorClicked.connect(self.selectLesson)
 
     def setRecommended(self, recommended):
+        text = self.tr('<p><strong>Congratulations! You have successfully finished this lesson.</strong></p>'
+                       '<p>Close this dialog to go back to the lessons library.</p>')
+
         if recommended:
             items = list()
             for item in recommended:
@@ -55,8 +58,13 @@ class QTutorFinishedDialog(BASE, WIDGET):
                     items.append('<li><a href="{}">{}</a></li>'.format(lessonId, lesson.displayName))
 
             if items:
-                text = '<ul>{}</ul>'.format(''.join(items))
-                self.txtRecommended.setHtml(text)
+                intro = self.tr('<p><strong>Congratulations! You have successfully finished this lesson.</strong></p>'
+                                '<p>The lesson\'s author(s) also recommend to complete following lessons:</p>')
+                final = self.tr('You can either close this dialog and go back to the '
+                                'lessons library or select one of the recommened lessons.')
+                text = '{}<ul>{}</ul>{}'.format(intro, ''.join(items), final)
+
+        self.txtRecommended.setHtml(text)
 
     def selectLesson(self, url):
         self.lesson = lessonsRegistry.lessonById(url.toString())
