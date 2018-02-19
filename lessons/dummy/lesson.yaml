@@ -22,7 +22,7 @@ lesson:
         - name: scratchlayers
           groupId: demo
   uk:
-    displayName: Dummy lesson
+    displayName: Демо-урок
     group: Демонстраційні уроки
     description: Це урок-шаблон створений Alexander Bruy. Він локалізований!
     steps:

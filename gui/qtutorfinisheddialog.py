@@ -46,9 +46,9 @@ class QTutorFinishedDialog(BASE, WIDGET):
         self.txtRecommended.anchorClicked.connect(self.selectLesson)
 
     def setRecommended(self, recommended):
-        if recommeneded:
+        if recommended:
             items = list()
-            for lesson in recommended:
+            for item in recommended:
                 lessonId = '{}:{}'.format(item[0], item[1])
                 lesson = lessonsRegistry.lessonById(lessonId)
                 if lesson:

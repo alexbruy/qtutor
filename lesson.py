@@ -275,7 +275,7 @@ class Lesson:
         # add recommended lessons, if any
         if 'recommended' in definition:
             for r in definition['recommended']:
-                lesson.addRecommendation(r['name'], r['groupId'])
+                lesson.addRecommendation(r['groupId'], r['name'])
 
         return lesson
 

@@ -129,7 +129,6 @@ class QTutorDock(BASE, WIDGET):
     def _stepUp(self):
         # this was the last step, lesson finished
         if self.currentStep == len(self.lesson.steps):
-            # TODO: show completion message and recommended lessons
             dlg = QTutorFinishedDialog(iface.mainWindow())
             dlg.setRecommended(self.lesson.recommended)
             result = dlg.exec_()
