@@ -273,8 +273,8 @@ class Lesson:
                     return None
 
         # add recommended lessons, if any
-        if 'recommended' in definition:
-            for r in definition['recommended']:
+        if 'recommended' in data['lesson']:
+            for r in data['lesson']['recommended']:
                 lesson.addRecommendation(r['groupId'], r['name'])
 
         return lesson

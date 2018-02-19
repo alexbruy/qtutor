@@ -1,6 +1,9 @@
 lesson:
   name: dummylesson
   groupId: demo
+  recommended:
+      - name: scratchlayers
+        groupId: demo
   en:
     displayName: Dummy lesson
     group: Demo lessons
@@ -18,9 +21,6 @@ lesson:
           description: Surprise! This step also does nothing.
         - name: Good bye
           description: Lesson is almost over. Press "Finish" button ASAP.
-    recommended:
-        - name: scratchlayers
-          groupId: demo
   uk:
     displayName: Демо-урок
     group: Демонстраційні уроки
@@ -38,6 +38,3 @@ lesson:
           description: Сюрприз! Цей крок какож нічого не робить.
         - name: Пока-пока
           description: Урок практично закінчився. Швидше натискай кнопку "Finish".
-    recommended:
-        - name: scratchlayers
-          groupId: demo

@@ -1,6 +1,9 @@
 lesson:
   name: scratchlayers
   groupId: demo
+  recommended:
+      - name: somelesson
+        groupId: somegroup
   en:
     displayName: Scratch layers
     group: Demo lessons
@@ -23,6 +26,3 @@ lesson:
             name: checkFeatureCount
             params:
               - 1
-    recommended:
-        - name: somelesson
-          groupId: somegroup
