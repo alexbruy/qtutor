@@ -131,7 +131,7 @@ class QTutorDock(BASE, WIDGET):
         if self.currentStep == len(self.lesson.steps):
             # TODO: show completion message and recommended lessons
             dlg = QTutorFinishedDialog(iface.mainWindow())
-            #dlg.setRecommended()
+            dlg.setRecommended(self.lesson.recommended)
             result = dlg.exec_()
             if result:
                 self.startLesson(dlg.lesson)
