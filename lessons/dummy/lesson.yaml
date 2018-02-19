@@ -1,0 +1,43 @@
+lesson:
+  name: dummylesson
+  groupId: demo
+  en:
+    displayName: Dummy lesson
+    group: Demo lessons
+    description: This is a dummy lesson by Alexander Bruy. But it has i18n!
+    steps:
+        - name: Hello world!
+          description: helloworld.html
+        - name: Second step
+          description: secondstep.html
+          execute:
+            name: doNothing
+          check:
+            name: checkNothing
+        - name: Third step
+          description: Surprise! This step also does nothing.
+        - name: Good bye
+          description: Lesson is almost over. Press "Finish" button ASAP.
+    recommended:
+        - name: scratchlayers
+          groupId: demo
+  uk:
+    displayName: Dummy lesson
+    group: Демонстраційні уроки
+    description: Це урок-шаблон створений Alexander Bruy. Він локалізований!
+    steps:
+        - name: Привіт, світ!
+          description: helloworld.html
+        - name: Другий крок
+          description: secondstep.html
+          execute:
+            name: doNothing
+          check:
+            name: checkNothing
+        - name: Третій крок
+          description: Сюрприз! Цей крок какож нічого не робить.
+        - name: Пока-пока
+          description: Урок практично закінчився. Швидше натискай кнопку "Finish".
+    recommended:
+        - name: scratchlayers
+          groupId: demo
