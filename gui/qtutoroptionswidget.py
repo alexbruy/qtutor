@@ -28,14 +28,14 @@ __revision__ = '$Format:%H$'
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QHBoxLayout
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QHBoxLayout, QFileDialog, QListWidgetItem
 
 from qgis.gui import QgsFileWidget, QgsOptionsPageWidget
 from qgis.core import QgsApplication, QgsSettings
 
 pluginPath = os.path.split(os.path.dirname(__file__))[0]
-WIDGET, BASE = uic.loadUiType(
-    os.path.join(pluginPath, 'ui', 'qtutoroptionswidgetbase.ui'))
+WIDGET, BASE = uic.loadUiType(os.path.join(pluginPath, 'ui', 'qtutoroptionswidgetbase.ui'))
 
 
 class QTutorOptionsPage(QgsOptionsPageWidget):
@@ -61,16 +61,47 @@ class QTutorOptionsWidget(BASE, WIDGET):
         super(QTutorOptionsWidget, self).__init__(parent)
         self.setupUi(self)
 
-        self.widgetLessonsPath.setFileWidgetButtonVisible(True)
-        self.widgetLessonsPath.setStorageMode(QgsFileWidget.GetDirectory)
-        self.widgetLessonsPath.setDialogTitle(self.tr('Select directory'))
+        self.btnAddLessonPath.setIcon(QgsApplication.getThemeIcon('symbologyAdd.svg'))
+        self.btnRemoveLessonPath.setIcon(QgsApplication.getThemeIcon('symbologyRemove.svg'))
 
-        lessonsPath = QgsSettings().value('qtutor/lessonsPath',
-                                          os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons'))
-        self.widgetLessonsPath.setFilePath(lessonsPath)
+        self.btnAddLessonPath.clicked.connect(self.addLessonPath)
+        self.btnRemoveLessonPath.clicked.connect(self.removeLessonPath)
+
+        pathsList = QgsSettings().value('qtutor/lessonsPaths',
+                                        [os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons')])
+        for directory in pathsList:
+            item = QListWidgetItem(self.lstLessonPaths)
+            item.setText(directory)
+            item.setFlags(Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable)
+            self.lstLessonPaths.addItem(item)
+            self.lstLessonPaths.setCurrentItem(item)
+
 
         self.chkSkipBuiltin.setChecked(QgsSettings().value('qtutor/skipBuiltin', False, bool))
 
+    def addLessonPath(self):
+        directory = QFileDialog.getExistingDirectory(self,
+                                                     self.tr('Choose a directory'),
+                                                     os.path.normpath(os.path.expanduser('~')),
+                                                     QFileDialog.ShowDirsOnly
+                                                    )
+
+        if directory:
+            item = QListWidgetItem(self.lstLessonPaths)
+            item.setText(directory)
+            item.setFlags(Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable)
+            self.lstLessonPaths.addItem(item)
+            self.lstLessonPaths.setCurrentItem(item)
+
+    def removeLessonPath(self):
+        currentRow = self.lstLessonPaths.currentRow()
+        item = self.lstLessonPaths.takeItem(currentRow)
+        del item
+
     def accept(self):
-        QgsSettings().setValue('qtutor/lessonsPath', self.widgetLessonsPath.filePath())
+        pathsList = list()
+        for i in range(self.lstLessonPaths.count()):
+            pathsList.append(self.lstLessonPaths.item(i).text())
+        QgsSettings().setValue('qtutor/lessonsPaths', pathsList)
+
         QgsSettings().setValue('qtutor/skipBuiltin', self.chkSkipBuiltin.isChecked())
