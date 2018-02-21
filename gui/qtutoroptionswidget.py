@@ -69,5 +69,5 @@ class QTutorOptionsWidget(BASE, WIDGET):
                                           os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons'))
         self.widgetLessonsPath.setFilePath(lessonsPath)
 
-    def apply(self, newPath):
+    def accept(self):
         QgsSettings().value('qtutor/lessonsPath', self.widgetLessonsPath.filePath())
