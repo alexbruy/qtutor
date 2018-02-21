@@ -69,5 +69,8 @@ class QTutorOptionsWidget(BASE, WIDGET):
                                           os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons'))
         self.widgetLessonsPath.setFilePath(lessonsPath)
 
+        self.chkSkipBuiltin.setChecked(QgsSettings().value('qtutor/skipBuiltin', False, bool))
+
     def accept(self):
-        QgsSettings().value('qtutor/lessonsPath', self.widgetLessonsPath.filePath())
+        QgsSettings().setValue('qtutor/lessonsPath', self.widgetLessonsPath.filePath())
+        QgsSettings().setValue('qtutor/skipBuiltin', self.chkSkipBuiltin.isChecked())

@@ -51,7 +51,9 @@ class QTutorRegistry:
 
     def loadLessons(self):
         # load built-in lessons
-        self._loadFromDirectory(os.path.join(pluginPath, 'lessons'))
+        skipBuiltin = QgsSettings().value('qtutor/skipBuiltin', False, bool)
+        if not skipBuiltin:
+            self._loadFromDirectory(os.path.join(pluginPath, 'lessons'))
 
         # load lessons from the user directory
         lessonsPath = QgsSettings().value('qtutor/lessonsPath',
