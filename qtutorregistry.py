@@ -55,16 +55,16 @@ class QTutorRegistry:
         if not skipBuiltin:
             self._loadFromDirectory(os.path.join(pluginPath, 'lessons'))
 
-        # load lessons from the user directory
-        lessonsPath = QgsSettings().value('qtutor/lessonsPath',
-                                          os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons'), str)
+        # load lessons from the user directories
+        pathsList = QgsSettings().value('qtutor/lessonsPaths',
+                                [os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons')])
+        for directory in pathsList:
+            if os.path.exists(directory):
+                for entry in os.scandir(directory):
+                    if entry.is_file:
+                        continue
 
-        if os.path.exists(lessonsPath):
-            for groupDir in os.scandir(lessonsPath):
-                if groupDir.is_file:
-                    continue
-
-                self._loadFromDirectory(os.path.join(lessonsPath, groupDir.name))
+                    self._loadFromDirectory(os.path.join(directory, entry.name))
 
     def addLessonsDirectory(self, directory):
         self._loadFromDirectory(directory)
