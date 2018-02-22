@@ -84,16 +84,16 @@ class QTutorRegistry:
 
         return None
 
-    def installLessons(self, filePath):
+    def installLessonsFromZip(self, filePath):
         # TODO: allow multiple groups inside archive
-        lessonsPath = QgsSettings().value('qtutor/lessonsPath',
-                                          os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons'), str)
+        pathsList = QgsSettings().value('qtutor/lessonsPaths',
+                                        [os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons')])
 
         with zipfile.ZipFile(filePath, 'r') as zf:
-            zf.extractall(lessonsPath)
+            zf.extractall(pathsList[0])
 
         dirName = os.path.splitext(filePath)[0]
-        self._loadFromDirectory(os.path.join(lessonsPath, dirName))
+        self._loadFromDirectory(os.path.join(pathsList[0], dirName))
         return True
 
     def uninstallLesson(self, lessonId):

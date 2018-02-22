@@ -83,7 +83,7 @@ class QTutorLibraryDialog(BASE, WIDGET):
         if fileName:
             with OverrideCursor(Qt.WaitCursor):
                 settings.setValue('qtutor/lastLessonDirectory', os.path.dirname(fileName))
-                lessonsRegistry.installLessons(fileName)
+                lessonsRegistry.installLessonsFromZip(fileName)
                 self.populateTree()
 
     def removeLessons(self):
