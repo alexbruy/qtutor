@@ -29,7 +29,7 @@ import os
 import configparser
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtGui import QTextDocument, QPixmap, QDesktopServices
+from qgis.PyQt.QtGui import QPixmap, QDesktopServices
 from qgis.PyQt.QtCore import QUrl
 from qgis.PyQt.QtWidgets import QDialogButtonBox, QDialog
 
@@ -51,7 +51,7 @@ class AboutDialog(BASE, WIDGET):
         version = cfg['general']['version']
         icon = cfg['general']['icon']
         author = cfg['general']['author']
-        self.home = cfg['general']['homepage']
+        home = cfg['general']['homepage']
         bugs = cfg['general']['tracker']
 
         self.setWindowTitle(self.tr('About {}'.format(name)))
@@ -60,10 +60,14 @@ class AboutDialog(BASE, WIDGET):
         self.lblLogo.setPixmap(QPixmap(os.path.join(pluginPath, *icon.split('/'))))
         self.lblVersion.setText(self.tr('Version: {}'.format(version)))
 
-        doc = QTextDocument()
-        doc.setHtml(self.aboutText(about, author, self.home, bugs))
-        self.textBrowser.setDocument(doc)
-        self.textBrowser.setOpenExternalLinks(True)
+        self.textBrowser.setHtml(self.tr(
+            '<p>{description}</p>'
+            '<p><strong>Developers</strong>: {developer}</p>'
+            '<p><strong>Homepage</strong>: <a href="{homepage}">{homepage}</a></p>'
+            '<p>Please report bugs at <a href="{bugtracker}">bugtracker</a>.</p>'.format(description=about,
+                                                                                         developer=author,
+                                                                                         homepage=self.home,
+                                                                                         bugtracker=bugs)))
 
         self.buttonBox.helpRequested.connect(self.openHelp)
 
@@ -74,13 +78,3 @@ class AboutDialog(BASE, WIDGET):
             QDesktopServices.openUrl(QUrl(self.home))
         else:
             QDesktopServices.openUrl(QUrl(self.home))
-
-    def aboutText(self, about, author, home, bugs):
-        return self.tr(
-            '<p>{description}</p>'
-            '<p><strong>Developers</strong>: {developer}</p>'
-            '<p><strong>Homepage</strong>: <a href="{homepage}">{homepage}</a></p>'
-            '<p>Please report bugs at <a href="{bugtracker}">bugtracker</a>.</p>'.format(description=about,
-                                                                                         developer=author,
-                                                                                         homepage=home,
-                                                                                         bugtracker=bugs))
