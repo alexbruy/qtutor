@@ -62,8 +62,8 @@ class QTutorLibraryDialog(BASE, WIDGET):
         self.treeLessons.itemCollapsed.connect(self.updateIcon)
         self.treeLessons.currentItemChanged.connect(self.updateInformation)
 
-        self.iconExpanded = QgsApplication.getThemeIcon('/mActionFileOpen.svg')
-        self.iconCollapsed = QIcon(os.path.join(pluginPath, 'icons', 'folderClosed.svg'))
+        self.iconExpanded = QgsApplication.getThemeIcon('/mIconFolderOpen.svg')
+        self.iconCollapsed = QgsApplication.getThemeIcon('/mIconFolder.svg')
 
         self.dock = QTutorDock()
         self.dock.lessonFinished.connect(self.showLibrary)
