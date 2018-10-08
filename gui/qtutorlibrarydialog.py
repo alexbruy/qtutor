@@ -64,6 +64,7 @@ class QTutorLibraryDialog(BASE, WIDGET):
 
         self.iconExpanded = QgsApplication.getThemeIcon('/mIconFolderOpen.svg')
         self.iconCollapsed = QgsApplication.getThemeIcon('/mIconFolder.svg')
+        self.iconLesson = QIcon(os.path.join(pluginPath, 'icons', 'lesson.svg'))
 
         self.dock = QTutorDock()
         self.dock.lessonFinished.connect(self.showLibrary)
@@ -122,20 +123,21 @@ class QTutorLibraryDialog(BASE, WIDGET):
         for groupId, groupName in lessonsRegistry.groups.items():
             groupItem = QTreeWidgetItem(self.treeLessons, self.GROUP_ITEM)
             groupItem.setText(0, groupName)
-            groupItem.setIcon(0, self.iconCollapsed)
+            groupItem.setData(0, Qt.DecorationRole, self.iconCollapsed)
             groupItem.setData(0, Qt.UserRole, groupId)
             for lessonId, lesson in lessonsRegistry.lessons[groupId].items():
                 lessonItem = QTreeWidgetItem(groupItem, self.LESSON_ITEM)
                 lessonItem.setText(0, lesson.displayName)
+                lessonItem.setData(0, Qt.DecorationRole, self.iconLesson)
                 lessonItem.setData(0, Qt.UserRole, lessonId)
 
             self.treeLessons.addTopLevelItem(groupItem)
 
     def updateIcon(self, item):
         if item.isExpanded():
-            item.setIcon(0, self.iconExpanded)
+            item.setData(0, Qt.DecorationRole, self.iconExpanded)
         else:
-            item.setIcon(0, self.iconCollapsed)
+            item.setData(0, Qt.DecorationRole, self.iconCollapsed)
 
     def updateInformation(self, current, previous):
         if current.type() == self.GROUP_ITEM:
