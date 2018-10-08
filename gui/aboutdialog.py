@@ -51,7 +51,7 @@ class AboutDialog(BASE, WIDGET):
         version = cfg['general']['version']
         icon = cfg['general']['icon']
         author = cfg['general']['author']
-        home = cfg['general']['homepage']
+        self.home = cfg['general']['homepage']
         bugs = cfg['general']['tracker']
 
         self.setWindowTitle(self.tr('About {}'.format(name)))
