@@ -40,7 +40,7 @@ def tempDirectory():
     return tmpPath
 
 
-def clearTempData():
+def removeTemporaryFiles():
     shutil.rmtree(tempDirectory(), True)
 
 
@@ -78,4 +78,4 @@ def findMenuItem(menuPath, subMenu, level):
 
 
 def isLesson(dirName):
-    return os.path.isdir(dirName) and os.path.isfile(os.path.join(dirName, "lesson.yaml"))
+    return os.path.isdir(dirName) and os.path.isfile(os.path.join(dirName, 'lesson.yaml'))

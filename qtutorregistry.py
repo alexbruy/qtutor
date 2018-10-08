@@ -132,7 +132,7 @@ class QTutorRegistry:
         self.lessons[groupId][lesson.id] = lesson
 
     def _removeLesson(self, lessonId):
-        groupId, name = lessonId.split(":")
+        groupId, name = lessonId.split(':')
         if groupId not in self.groups:
             return
 

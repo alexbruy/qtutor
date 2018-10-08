@@ -31,7 +31,7 @@ import uuid
 
 from qgis.utils import iface
 
-from qtutor import utils
+import qtutor.utils as utils
 
 
 def loadProject(projectPath):

@@ -38,7 +38,7 @@ from qtutor import lessonsRegistry
 from qtutor.gui.qtutorlibrarydialog import QTutorLibraryDialog
 from qtutor.gui.qtutoroptionswidget import QTutorOptionsPage
 from qtutor.gui.aboutdialog import AboutDialog
-from qtutor.utils import clearTempData
+import qtutor.utils as utils
 
 pluginPath = os.path.dirname(__file__)
 
@@ -95,8 +95,7 @@ class QTutorPlugin:
 
         self.iface.unregisterOptionsWidgetFactory(self.optionsFactory)
 
-        # cleanup temporary files
-        clearTempData()
+        utils.removeTemporaryFiles()
 
     def run(self):
         dlg = QTutorLibraryDialog()

@@ -25,9 +25,7 @@ __copyright__ = '(C) 2017, Alexander Bruy'
 
 __revision__ = '$Format:%H$'
 
-
 from qtutor.qtutorregistry import QTutorRegistry
-
 
 lessonsRegistry = QTutorRegistry()
 
