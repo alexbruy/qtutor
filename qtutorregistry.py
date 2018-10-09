@@ -61,10 +61,10 @@ class QTutorRegistry:
         for directory in pathsList:
             if os.path.exists(directory):
                 for entry in os.scandir(directory):
-                    if entry.is_file:
+                    if entry.is_file():
                         continue
 
-                    self._loadFromDirectory(os.path.join(directory, entry.name))
+                    self._loadFromDirectory(entry.path)
 
     def addLessonsDirectory(self, directory):
         self._loadFromDirectory(directory)
@@ -107,7 +107,7 @@ class QTutorRegistry:
                 return False
 
             rootDirectory = lesson.root
-            self._removeLesson(lesson)
+            self._removeLesson(lessonId)
             shutil.rmtree(rootDirectory)
             return True
 

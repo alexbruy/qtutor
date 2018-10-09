@@ -88,9 +88,10 @@ class QTutorLibraryDialog(BASE, WIDGET):
                 self.populateTree()
 
     def removeLessons(self):
-        item = self.treeLessons.currentItem()
-        # TODO: get lesson from item and uninstall it
-        #lessonsRegistry.uninstallLesson()
+        with OverrideCursor(Qt.WaitCursor):
+            lessonId = self.treeLessons.currentItem().data(0, Qt.UserRole)
+            lessonsRegistry.uninstallLesson(lessonId)
+            self.populateTree()
 
     def startLesson(self):
         if self.dock.running:
@@ -140,7 +141,7 @@ class QTutorLibraryDialog(BASE, WIDGET):
             item.setData(0, Qt.DecorationRole, self.iconCollapsed)
 
     def updateInformation(self, current, previous):
-        if current.type() == self.GROUP_ITEM:
+        if current is None or current.type() == self.GROUP_ITEM:
             self.txtInfo.clear()
             self.btnStartLesson.setEnabled(False)
         else:
