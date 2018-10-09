@@ -89,6 +89,9 @@ class QTutorRegistry:
         pathsList = QgsSettings().value('qtutor/lessonsPaths',
                                         [os.path.join(QgsApplication.qgisSettingsDirPath(), 'lessons')])
 
+        if not os.path.exists(pathsList[0]):
+            os.makedirs(pathsList[0])
+
         with zipfile.ZipFile(filePath, 'r') as zf:
             zf.extractall(pathsList[0])
 
