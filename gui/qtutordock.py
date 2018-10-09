@@ -28,7 +28,7 @@ __revision__ = '$Format:%H$'
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtGui import QIcon, QTextDocument
+from qgis.PyQt.QtGui import QIcon, QTextDocument, QPalette, QColor
 from qgis.PyQt.QtCore import pyqtSignal, Qt, QCoreApplication, QUrl
 from qgis.PyQt.QtWidgets import QMessageBox, QListWidgetItem, QAbstractItemView
 
@@ -40,6 +40,9 @@ from qtutor.gui.qtutorfinisheddialog import QTutorFinishedDialog
 
 pluginPath = os.path.split(os.path.dirname(__file__))[0]
 WIDGET, BASE = uic.loadUiType(os.path.join(pluginPath, 'ui', 'qtutordockbase.ui'))
+
+BASE_COLOR = QgsApplication.palette().brush(QPalette.Active, QPalette.Base)
+ACTIVE_COLOR = QColor(134, 176, 81, 255)
 
 
 class QTutorDock(BASE, WIDGET):
@@ -56,9 +59,9 @@ class QTutorDock(BASE, WIDGET):
         self.btnQuitLesson.clicked.connect(self.quitLesson)
 
         self.iconEmpty = QIcon()
-        self.iconCurrent = QgsApplication.getThemeIcon('/mActionArrowRight.svg')
+        #self.iconCurrent = QgsApplication.getThemeIcon('/mActionArrowRight.svg')
         #self.iconCurrent = QgsApplication.getThemeIcon('/mActionStart.svg')
-        #self.iconCurrent = QgsApplication.getThemeIcon('/mTaskRunning.svg')
+        self.iconCurrent = QgsApplication.getThemeIcon('/mTaskRunning.svg')
 
         self.lesson = None
         self.currentStep = 0
@@ -96,6 +99,7 @@ class QTutorDock(BASE, WIDGET):
             pass
 
         self.lstSteps.item(self.currentStep).setIcon(self.iconEmpty)
+        self.lstSteps.item(self.currentStep).setBackground(BASE_COLOR)
         self.currentStep += 1
         self._stepUp()
 
@@ -145,7 +149,7 @@ class QTutorDock(BASE, WIDGET):
             # mark step as current and sroll list so it is visible
             item = self.lstSteps.item(self.currentStep)
             item.setIcon(self.iconCurrent)
-            # TODO: highlight current step
+            item.setBackground(ACTIVE_COLOR)
             self.lstSteps.scrollToItem(item, QAbstractItemView.PositionAtTop)
 
             step = self.lesson.steps[self.currentStep]
