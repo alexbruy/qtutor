@@ -114,6 +114,7 @@ class QTutorDock(BASE, WIDGET):
 
     def restartLesson(self):
         self.lstSteps.item(self.currentStep).setIcon(self.iconEmpty)
+        self.lstSteps.item(self.currentStep).setBackground(BASE_COLOR)
         self._restoreNextButton()
 
         self.currentStep = 0
