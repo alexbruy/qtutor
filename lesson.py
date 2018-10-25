@@ -67,8 +67,8 @@ class LessonStep:
 
         self.type = stepType
 
-        self.signals = None
-        self.handlers = None
+        self.signal = None
+        self.handler = None
 
     def runFunction(self, functionType):
         params = self.functionParameters(functionType)
@@ -87,12 +87,8 @@ class LessonStep:
             return tuple()
 
     def addSignalHandler(self, signal, handler):
-        if self.signals is None:
-            self.signals = [signal]
-            self.handlers = [handler]
-        else:
-            self.signals.append(signal)
-            self.handlers.append(handler)
+        self.signal = signal
+        self.handler = handler
 
 class Lesson:
 
@@ -143,7 +139,7 @@ class Lesson:
         self.steps.append(step)
 
     def addMenuStep(self, menuString, name='', description=''):
-        action = menuByName(menuString)
+        action, parentMenu = menuByName(menuString)
 
         if action is None:
            raise Exception(self.tr('Can not find menu "{}".'.format(menuString)))
@@ -156,11 +152,11 @@ class Lesson:
         else:
             description = 'Go to menu "{}". Once you click lesson will move to the next step.'.format(menuString.replace('&', '').replace('|', '→'))
 
-        def _menuClicked(sender):
+        def _actionTriggered(sender):
             return sender.text() == action.text()
 
         step = LessonStep(name, description, stepType=LessonStep.StepType.Menu)
-        step.addSignalHandler(action.triggered, _menuClicked)
+        step.addSignalHandler(parentMenu.triggered, _actionTriggered)
         self.steps.append(step)
 
     def addRecommendation(self, nameId, groupId):

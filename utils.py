@@ -45,36 +45,23 @@ def removeTemporaryFiles():
 
 
 def menuByName(menuString):
-    menuPath = menuString.split('|')
+    menu = None
+    action = None
 
-    menuAction = None
+    tokens = menuString.split('|')
     actions = iface.mainWindow().menuBar().actions()
-    for action in actions:
-        if action.text().replace('&', '') == menuPath[0]:
-            menuAction = action
-            if len(menuPath) > 1:
-                menuAction = findMenuItem(menuPath, action, 1)
-            break
 
-    return menuAction
+    for t in tokens:
+        for a in actions:
+            if a.text().replace('&', '') == t:
+                if a.menu():
+                    menu = a.menu()
+                    actions = menu.actions()
+                    break
+                else:
+                    action = a
 
-
-def findMenuItem(menuPath, subMenu, level):
-    menuAction = None
-
-    if subMenu.text().replace('&', '') == menuPath[level]:
-        menuAction = subMenu
-        if len(menuPath) >  level + 1:
-            menuAction = findMenuItem(menuPath, subMenu, level + 1)
-    else:
-        actions = subMenu.menu().actions()
-        for action in actions:
-            if action.text().replace('&', '') == menuPath[level]:
-                menuAction = action
-                if len(menuPath) > level + 1:
-                    menuAction = findMenuItem(menuPath, action, level + 1)
-                break
-    return menuAction
+    return action, menu
 
 
 def isLesson(dirName):

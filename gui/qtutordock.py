@@ -94,9 +94,8 @@ class QTutorDock(BASE, WIDGET):
                 return
 
         # disconnect signals if any
-        if step.signals is not None:
-            # TODO: disconnect signals from handlers
-            pass
+        if step.signal is not None:
+            step.signal.disconnect(self.signalEmmited)
 
         self.lstSteps.item(self.currentStep).setIcon(self.iconEmpty)
         self.lstSteps.item(self.currentStep).setBackground(BASE_COLOR)
@@ -156,9 +155,8 @@ class QTutorDock(BASE, WIDGET):
             step = self.lesson.steps[self.currentStep]
 
             # connect signals if any
-            if step.signals is not None:
-                # TODO: connect singnals to handlers
-                pass
+            if step.signal is not None:
+                step.signal.connect(self.signalEmmited)
 
             # load step description
             if os.path.exists(step.description):
@@ -181,6 +179,11 @@ class QTutorDock(BASE, WIDGET):
                     self.btnExecuteStep.setEnabled(True)
             else:
                 self.btnExecuteStep.setEnabled(False)
+
+    def signalEmmited(self, *args):
+        step = self.lesson.steps[self.currentStep]
+        if step.handler(*args):
+            self.nextStep()
 
     def _restoreNextButton(self):
         self.btnNextStep.setText(self.tr('Next'))
