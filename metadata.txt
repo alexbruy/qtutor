@@ -9,7 +9,7 @@ qgisMinimumVersion=3.0
 author=Alexander Bruy
 email=alexander.bruy@gmail.com
 
-icon=icons/qtutor.png
+icon=icons/qtutor.svg
 
 tags=tutorial,lesson,qgis
 
