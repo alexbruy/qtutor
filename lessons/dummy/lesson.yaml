@@ -7,7 +7,7 @@ lesson:
   en:
     displayName: Dummy lesson
     group: Demo lessons
-    description: This is a dummy lesson by Alexander Bruy. But it has i18n!
+    description: This is a dummy lesson. But it has i18n!
     steps:
         - name: Hello world!
           description: helloworld.html
@@ -18,13 +18,13 @@ lesson:
           check:
             name: checkNothing
         - name: Third step
-          description: Surprise! This step also does nothing.
+          description: This step also does nothing.
         - name: Good bye
-          description: Lesson is almost over. Press "Finish" button ASAP.
+          description: Lesson is almost over. Press "Finish" button.
   uk:
     displayName: Демо-урок
     group: Демонстраційні уроки
-    description: Це урок-шаблон створений Alexander Bruy. Він локалізований!
+    description: Це урок-шаблон. Він локалізований!
     steps:
         - name: Привіт, світ!
           description: helloworld.html
@@ -35,6 +35,6 @@ lesson:
           check:
             name: checkNothing
         - name: Третій крок
-          description: Сюрприз! Цей крок какож нічого не робить.
+          description: Цей крок какож нічого не робить.
         - name: Пока-пока
-          description: Урок практично закінчився. Швидше натискай кнопку "Finish".
+          description: Урок практично закінчився. Натисніть кнопку "Finish".
