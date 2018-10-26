@@ -61,7 +61,7 @@ class QTutorFinishedDialog(BASE, WIDGET):
                 intro = self.tr('<p><strong>Congratulations! You have successfully finished this lesson.</strong></p>'
                                 '<p>The lesson\'s author(s) also recommend to complete following lessons:</p>')
                 final = self.tr('You can either close this dialog and go back to the '
-                                'lessons library or select one of the recommened lessons.')
+                                'lessons library or select one of the recommended lessons.')
                 text = '{}<ul>{}</ul>{}'.format(intro, ''.join(items), final)
 
         self.txtRecommended.setHtml(text)
