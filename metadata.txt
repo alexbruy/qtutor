@@ -1,7 +1,7 @@
 [general]
 name=QTutor
 description=Learn QGIS with the help of step-by-step semi-interactive lessons.
-about=Run lessons and tutorials to learn QGIS and/or its plugins. Lessons need to be installed separately. Inspired and based on the Lessons plugin by Victor Olaya.
+about=Run lessons and tutorials to learn QGIS and/or its plugins. Lessons need to be installed separately. Inspired and based on the Lessons plugin by Victor Olaya. Needs PyYAML to work.
 category=Plugins
 version=0.1
 qgisMinimumVersion=3.0
