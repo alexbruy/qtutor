@@ -30,7 +30,7 @@ import os
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, QUrl
 from qgis.PyQt.QtGui import QIcon, QTextDocument
-from qgis.PyQt.QtWidgets import QDialog, QDockWidget, QMessageBox, QTreeWidgetItem
+from qgis.PyQt.QtWidgets import QDialog, QDockWidget, QMessageBox, QTreeWidgetItem, QFileDialog
 
 from qgis.gui import QgsGui
 from qgis.core import QgsSettings, QgsApplication
@@ -76,11 +76,11 @@ class QTutorLibraryDialog(BASE, WIDGET):
     def addLessons(self):
         settings = QgsSettings()
         lastDirectory = settings.value('qtutor/lastLessonDirectory', os.path.expanduser('~'), str)
-        fileName, _ = QgsFileDialog.getOpenFileName(self,
-                                                    self.tr('Select file'),
-                                                    lastDirectory,
-                                                    self.tr('ZIP archives (*.zip *.ZIP)')
-                                                   )
+        fileName, _ = QFileDialog.getOpenFileName(self,
+                                                  self.tr('Select file'),
+                                                  lastDirectory,
+                                                  self.tr('ZIP archives (*.zip *.ZIP)')
+                                                 )
         if fileName:
             with OverrideCursor(Qt.WaitCursor):
                 settings.setValue('qtutor/lastLessonDirectory', os.path.dirname(fileName))
